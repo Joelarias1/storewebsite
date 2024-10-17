@@ -1,8 +1,11 @@
 :root {
-    --primary-color: #3498db;
-    --secondary-color: #2ecc71;
-    --text-color: #333;
-    --background-color: #f4f4f4;
+    --primary-color: #34495e;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --text-color: #2c3e50;
+    --background-color: #ecf0f1;
+    --card-background: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -12,7 +15,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
@@ -22,7 +25,13 @@ header {
     background-color: var(--primary-color);
     color: white;
     text-align: center;
-    padding: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 0.5rem;
 }
 
 nav ul {
@@ -31,82 +40,118 @@ nav ul {
 }
 
 nav ul li {
-    display: inline;
-    margin-right: 10px;
+    display: inline-block;
+    margin-right: 15px;
 }
 
 nav ul li a {
     color: white;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 1em;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--secondary-color);
 }
 
 main {
-    padding: 10px;
+    padding: 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .category {
-    flex-basis: calc(50% - 5px);
-    margin-bottom: 10px;
+    flex-basis: calc(50% - 10px);
+    margin-bottom: 20px;
 }
 
 .category h2 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 5px;
 }
 
 .game-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 15px;
 }
 
 .game-card {
-    background-color: white;
+    background-color: var(--card-background);
     border-radius: 8px;
-    padding: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    font-size: 0.8em;
+    padding: 15px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--shadow-color);
 }
 
 .game-card img {
     width: 100%;
-    height: 100px;
+    height: 150px;
     object-fit: cover;
     border-radius: 4px;
+    margin-bottom: 10px;
 }
 
 .game-card h3 {
-    font-size: 1em;
-    margin: 5px 0;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.game-card p {
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 .price {
     font-weight: bold;
     color: var(--secondary-color);
+    font-size: 1.1em;
 }
 
 .discount {
-    color: red;
+    color: var(--accent-color);
     font-style: italic;
+    font-size: 0.9em;
 }
 
 footer {
     background-color: var(--primary-color);
     color: white;
     text-align: center;
-    padding: 0.5rem;
-    font-size: 0.8em;
+    padding: 1rem;
+    font-size: 0.9em;
+    margin-top: 20px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .category {
         flex-basis: 100%;
     }
+}
+
+@media (max-width: 768px) {
     .game-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -115,9 +160,22 @@ footer {
 @media (max-width: 480px) {
     nav ul li {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
     }
     .game-grid {
         grid-template-columns: 1fr;
     }
+    .game-card {
+        padding: 10px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.game-card {
+    animation: fadeIn 0.5s ease-in;
 }
