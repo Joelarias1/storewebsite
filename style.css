@@ -6,12 +6,17 @@
     --background-color: #ecf0f1;
     --card-background: #ffffff;
     --shadow-color: rgba(0, 0, 0, 0.1);
+    --base-font-size: 16px;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+html {
+    font-size: var(--base-font-size);
 }
 
 body {
@@ -92,6 +97,7 @@ main {
     display: flex;
     flex-direction: column;
     height: 100%;
+    animation: fadeIn 0.5s ease-in;
 }
 
 .game-card:hover {
@@ -108,20 +114,20 @@ main {
 }
 
 .game-card h3 {
-    font-size: 1.1em;
-    margin-bottom: 8px;
+    font-size: 1.2rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
     color: var(--primary-color);
+    height: 2.4em;
+    overflow: hidden;
 }
 
 .game-card p {
-    font-size: 0.9em;
-    margin-bottom: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
     flex-grow: 1;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
 }
 
 .price {
@@ -146,12 +152,18 @@ footer {
 }
 
 @media (max-width: 1024px) {
+    html {
+        font-size: 15px;
+    }
     .category {
         flex-basis: 100%;
     }
 }
 
 @media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
     .game-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -170,12 +182,7 @@ footer {
     }
 }
 
-/* Animaciones */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-.game-card {
-    animation: fadeIn 0.5s ease-in;
 }
