@@ -2,16 +2,21 @@
     --primary-color: #34495e;
     --bs-primary: #34495e;
     --bs-primary-rgb: 52, 73, 94;
+    --bs-primary-hover:#95bbe1;
     --secondary-color: #3498db;
-    --accent-color: #e74c3c;
     --text-color: #2c3e50;
     --background-color: #ecf0f1;
     --card-background: #ffffff;
     --shadow-color: rgba(0, 0, 0, 0.1);
     --base-font-size: 16px;
     --card-transition: all 0.3s ease;
-    --title-font: 'Poppins', sans-serif;
+    --title-font: 'Roboto', sans-serif;
     --body-font: 'Inter', sans-serif;
+    --btn-primary: #34495e;          
+    --btn-primary-hover: #2c3e50;    
+    --btn-outline-hover: #3498db;    
+    --btn-text-hover: #ffffff;      
+
 }
 
 * {
@@ -94,7 +99,6 @@ nav ul li a:hover {
     margin: 0 auto;
     transition: var(--card-transition);
     background-color: var(--card-background);
-    
 }
 
 .card-title {
@@ -103,9 +107,10 @@ nav ul li a:hover {
 }
 
 .card-img-top {
-    height: 200px;
+    height: 250px;
     object-fit: contain;
     padding: 1rem;
+    background: #f8f9fa;
 }
 
 .card-body {
@@ -116,6 +121,8 @@ nav ul li a:hover {
 
 .card-text {
     flex-grow: 1;
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 /* Efectos hover de las cards */
@@ -124,6 +131,51 @@ nav ul li a:hover {
     box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
     border-color: var(--bs-primary);
 }
+
+
+/* Estilos para los botones */
+.btn {
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--btn-primary);
+    border-color: var(--btn-primary);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Ajustes para el botón outline */
+.btn-outline-primary {
+    border-color: var(--btn-primary);
+    color: var(--btn-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--btn-outline-hover);
+    border-color: var(--btn-outline-hover);
+    color: var(--btn-text-hover);
+    transform: translateY(-2px);
+}
+
+
+/* Estilos para los badges */
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+
 
 /* Animaciones */
 @keyframes fadeIn {
