@@ -16,7 +16,6 @@
     --btn-primary-hover: #2c3e50;    
     --btn-outline-hover: #3498db;    
     --btn-text-hover: #ffffff;      
-
 }
 
 * {
@@ -39,9 +38,9 @@ body {
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 /* Header y navegación */
@@ -76,6 +75,7 @@ nav ul li a:hover {
     color: white;
     text-shadow: 0 0 10px var(--secondary-color);
     transform: scale(1.1);
+    transform: translateY(-2px);
     display: inline-block;
 }
 
@@ -89,6 +89,22 @@ nav ul li a:hover {
 
 .navbar-toggler:focus {
     box-shadow: 0 0 0 0.25rem rgba(255, 242, 242, 0.2);
+}
+
+.btn-login {
+    border-width: 1px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    background-color: var(--background-color);
+    color: var(--bs-primary);
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    background-color: var(--btn-outline-hover);
 }
 
 

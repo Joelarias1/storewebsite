@@ -9,27 +9,21 @@
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles/style.css" />
+  </head> 
   <body>
     <header class="bg-primary text-white py-3">
       <div class="container">
-        <div
-          class="d-flex justify-content-between justify-content-sm-center align-items-center my-3 position-relative gap-2"
-        >
+        <div class="d-flex justify-content-between justify-content-sm-center align-items-center my-3 position-relative gap-2">
           <h1 class="mb-0 mx-0 mx-sm-auto">Tabletop Treasures</h1>
-          <button
-            class="navbar-toggler d-lg-none text-white position-absolute end-0"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
+          <button class="navbar-toggler d-lg-none text-white position-absolute end-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
           </button>
         </div>
         <nav class="navbar navbar-expand-lg navbar-dark p-0">
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto">
+            <ul class="navbar-nav mx-auto d-flex align-items-center">
               <li class="nav-item">
                 <a class="nav-link" href="index.html">All Games</a>
               </li>
@@ -44,6 +38,12 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="classic.html">Classic</a>
+              </li>
+              <li class="nav-item ms-4">
+                <button class="btn btn-login rounded-pill">
+                  <i class="fas fa-user"></i>
+                  <span class="ms-2">Login</span>
+                </button>
               </li>
             </ul>
           </div>
@@ -327,12 +327,16 @@
           </div>
           <div class="col">
             <div class="card shadow-sm">
-              <img src="img/ticket2ride.png" class="card-img-top" alt="ticket2ride" />
+              <img
+                src="img/ticket2ride.png"
+                class="card-img-top"
+                alt="ticket2ride"
+              />
               <div class="card-body">
                 <h3 class="card-title h5">Ticket to Ride</h3>
                 <p class="card-text">
-                  Cross-country train adventure where players collect cards to build
-                  railway routes connecting cities.
+                  Cross-country train adventure where players collect cards to
+                  build railway routes connecting cities.
                 </p>
                 <div
                   class="d-flex justify-content-between align-items-center mt-4 mb-2"
@@ -351,12 +355,16 @@
           </div>
           <div class="col">
             <div class="card shadow-sm">
-              <img src="img/codenames.webp" class="card-img-top" alt="Codenames" />
+              <img
+                src="img/codenames.webp"
+                class="card-img-top"
+                alt="Codenames"
+              />
               <div class="card-body">
                 <h3 class="card-title h5">Codenames</h3>
                 <p class="card-text">
-                  Fun word-guessing party game where two teams compete to identify
-                  secret agents using one-word clues.
+                  Fun word-guessing party game where two teams compete to
+                  identify secret agents using one-word clues.
                 </p>
                 <div
                   class="d-flex justify-content-between align-items-center mt-4 mb-2"
