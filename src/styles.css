@@ -1,0 +1,106 @@
+/* Variables Globales */
+:root {
+    /* Colores base */
+    --primary-color: #34495e;
+    --secondary-color: #3498db;
+    --background-color: #ecf0f1;
+    --text-color: #2c3e50;
+    --card-background: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+
+    /* Variantes de colores */
+    --primary-light: #4a6b8a;
+    --primary-dark: #2c3e50;
+    --secondary-light: #5faee3;
+    --secondary-dark: #2980b9;
+
+    /* Fuentes */
+    --title-font: 'Roboto', sans-serif;
+    --body-font: 'Inter', sans-serif;
+    --base-font-size: 16px;
+
+    /* Transiciones */
+    --transition-normal: all 0.3s ease;
+}
+
+/* Sistema de colores personalizado */
+.bg-principal { background-color: var(--primary-color); }
+.bg-secundario { background-color: var(--secondary-color); }
+.bg-principal-claro { background-color: var(--primary-light); }
+.bg-principal-oscuro { background-color: var(--primary-dark); }
+.bg-secundario-claro { background-color: var(--secondary-light); }
+.bg-secundario-oscuro { background-color: var(--secondary-dark); }
+
+/* Textos personalizados */
+.texto-principal { color: var(--primary-color); }
+.texto-secundario { color: var(--secondary-color); }
+.texto-claro { color: var(--background-color); }
+.texto-oscuro { color: var(--text-color); }
+
+/* Botones personalizados */
+.boton-principal {
+    background-color: var(--primary-color);
+    color: white;
+    transition: var(--transition-normal);
+}
+
+.boton-principal:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.boton-secundario {
+    background-color: var(--secondary-color);
+    color: white;
+    transition: var(--transition-normal);
+}
+
+.boton-secundario:hover {
+    background-color: var(--secondary-dark);
+    transform: translateY(-2px);
+}
+
+/* Sombras personalizadas */
+.sombra-suave { box-shadow: 0 2px 4px var(--shadow-color); }
+.sombra-media { box-shadow: 0 4px 6px var(--shadow-color); }
+.sombra-fuerte { box-shadow: 0 6px 8px var(--shadow-color); }
+
+/* Bordes personalizados */
+.borde-redondo-suave { border-radius: 4px; }
+.borde-redondo-medio { border-radius: 8px; }
+.borde-redondo-fuerte { border-radius: 16px; }
+.borde-circular { border-radius: 50%; }
+
+/* Transiciones personalizadas */
+.transicion-normal { transition: var(--transition-normal); }
+
+
+
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos base */
+html {
+    font-size: var(--base-font-size);
+}
+
+body {
+    font-family: var(--body-font);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tipografía */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--title-font);
+    font-weight: 600;
+}
+
