@@ -31,50 +31,6 @@
 .bg-secundario-claro { background-color: var(--secondary-light); }
 .bg-secundario-oscuro { background-color: var(--secondary-dark); }
 
-/* Textos personalizados */
-.texto-principal { color: var(--primary-color); }
-.texto-secundario { color: var(--secondary-color); }
-.texto-claro { color: var(--background-color); }
-.texto-oscuro { color: var(--text-color); }
-
-/* Botones personalizados */
-.boton-principal {
-    background-color: var(--primary-color);
-    color: white;
-    transition: var(--transition-normal);
-}
-
-.boton-principal:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
-}
-
-.boton-secundario {
-    background-color: var(--secondary-color);
-    color: white;
-    transition: var(--transition-normal);
-}
-
-.boton-secundario:hover {
-    background-color: var(--secondary-dark);
-    transform: translateY(-2px);
-}
-
-/* Sombras personalizadas */
-.sombra-suave { box-shadow: 0 2px 4px var(--shadow-color); }
-.sombra-media { box-shadow: 0 4px 6px var(--shadow-color); }
-.sombra-fuerte { box-shadow: 0 6px 8px var(--shadow-color); }
-
-/* Bordes personalizados */
-.borde-redondo-suave { border-radius: 4px; }
-.borde-redondo-medio { border-radius: 8px; }
-.borde-redondo-fuerte { border-radius: 16px; }
-.borde-circular { border-radius: 50%; }
-
-/* Transiciones personalizadas */
-.transicion-normal { transition: var(--transition-normal); }
-
-
 
 /* Reset básico */
 * {
@@ -102,5 +58,90 @@ body {
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--title-font);
     font-weight: 600;
+}
+
+
+/* Cards */
+/* Cards */
+.card {
+    height: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    transition: var(--card-transition);
+    background-color: var(--card-background);
+}
+
+.card-title {
+    font-family: var(--title-font);
+    font-weight: 600;
+}
+
+.card-img-top {
+    height: 250px;
+    object-fit: contain;
+    padding: 1rem;
+    background: #f8f9fa;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.card-text {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Efectos hover de las cards */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+
+/* Botones */
+.btn {
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+}
+
+body .btn-primary { 
+    background: var(--primary-color);
+    border-color: var(--btn-primary);
+    color: #ffffff;
+}
+
+/*  anteponer body xd  */
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Ajustes para el botón outline */
+.btn-outline-primary {
+    border-color: var(--btn-primary);
+    color: var(--btn-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--btn-outline-hover);
+    border-color: var(--btn-outline-hover);
+    color: var(--btn-text-hover);
+    transform: translateY(-2px);
+}
+
+
+/* Estilos para los badges */
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
