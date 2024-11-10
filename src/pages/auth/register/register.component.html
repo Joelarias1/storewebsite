@@ -1,1 +1,196 @@
-<p>register works!</p>
+<main class="container-fluid py-4">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-10">
+        <div class="card border-0 shadow-lg login-card">
+          <div class="row g-0">
+            <!-- Formulario Register -->
+            <div class="col-md-6">
+              <div class="card-body p-3">
+                <h2 class="card-title h2 mb-3 mt-2 text-center">Join us!</h2>
+                <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+                  <!-- Full Name -->
+                  <div class="mb-2">
+                    <label for="fullName" class="form-label small">Full Name</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-user"></i>
+                      </span>
+                      <input
+                        type="text"
+                        class="form-control py-2"
+                        id="fullName"
+                        name="fullName"
+                        [(ngModel)]="userData.fullName"
+                        placeholder="Enter your full name"
+                        required
+                      />
+                    </div>
+                  </div>
+  
+                  <!-- Username -->
+                  <div class="mb-2">
+                    <label for="username" class="form-label small">Username</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-at"></i>
+                      </span>
+                      <input
+                        type="text"
+                        class="form-control py-2"
+                        id="username"
+                        name="username"
+                        [(ngModel)]="userData.username"
+                        placeholder="Choose a username"
+                        required
+                      />
+                    </div>
+                  </div>
+  
+                  <!-- Email -->
+                  <div class="mb-2">
+                    <label for="email" class="form-label small">Email</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-envelope"></i>
+                      </span>
+                      <input
+                        type="email"
+                        class="form-control py-2"
+                        id="email"
+                        name="email"
+                        [(ngModel)]="userData.email"
+                        placeholder="Enter your email"
+                        required
+                      />
+                    </div>
+                  </div>
+  
+                  <!-- Birth Date -->
+                  <div class="mb-2">
+                    <label for="birthdate" class="form-label small">Birth Date</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-calendar"></i>
+                      </span>
+                      <input
+                        type="date"
+                        class="form-control py-2"
+                        id="birthdate"
+                        name="birthdate"
+                        [(ngModel)]="userData.birthdate"
+                        required
+                      />
+                    </div>
+                  </div>
+  
+                  <!-- Password -->
+                  <div class="mb-2">
+                    <label for="password" class="form-label small">Password</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-lock"></i>
+                      </span>
+                      <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        class="form-control py-2"
+                        id="password"
+                        name="password"
+                        [(ngModel)]="userData.password"
+                        placeholder="Enter password"
+                        required
+                      />
+                      <button 
+                        type="button" 
+                        class="btn btn-outline-secondary" 
+                        (click)="togglePasswordVisibility()">
+                        <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                      </button>
+                    </div>
+                    <div class="form-text small">
+                      Must be 6-18 characters with at least one number and one uppercase letter.
+                    </div>
+                  </div>
+  
+                  <!-- Confirm Password -->
+                  <div class="mb-2">
+                    <label for="confirmPassword" class="form-label small">Confirm Password</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-lock"></i>
+                      </span>
+                      <input
+                        [type]="showConfirmPassword ? 'text' : 'password'"
+                        class="form-control py-2"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        [(ngModel)]="userData.confirmPassword"
+                        placeholder="Confirm your password"
+                        required
+                      />
+                      <button 
+                        type="button" 
+                        class="btn btn-outline-secondary" 
+                        (click)="toggleConfirmPasswordVisibility()">
+                        <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                      </button>
+                    </div>
+                  </div>
+  
+                  <!-- Address -->
+                  <div class="mb-3">
+                    <label for="address" class="form-label small">Shipping Address</label>
+                    <div class="input-group">
+                      <span class="input-group-text py-2">
+                        <i class="fas fa-home"></i>
+                      </span>
+                      <textarea
+                        class="form-control"
+                        id="address"
+                        name="address"
+                        [(ngModel)]="userData.address"
+                        placeholder="Enter your shipping address (Optional)"
+                        rows="1"
+                      ></textarea>
+                    </div>
+                  </div>
+  
+                  <!-- Buttons -->
+                  <div class="d-grid gap-2 mb-2">
+                    <button
+                      type="submit"
+                      class="btn btn-primary py-2"
+                      [disabled]="!registerForm.form.valid"
+                    >
+                      Create Account
+                    </button>
+                    <button
+                      type="reset"
+                      class="btn btn-outline-secondary py-2"
+                    >
+                      Clear Form
+                    </button>
+                  </div>
+  
+                  <p class="text-center mb-0 small">
+                    Already have an account?
+                    <a routerLink="/login" class="text-primary text-decoration-none">Login</a>
+                  </p>
+                </form>
+              </div>
+            </div>
+  
+            <!-- Welcome Section -->
+            <div class="col-md-6 d-none d-md-block p-3 welcome-section">
+              <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center text-white welcome-content">
+                <i class="fas fa-dice-d20 fa-3x mb-2"></i>
+                <h3 class="h4 mb-2">Welcome to Tabletop Treasures!</h3>
+                <p class="mb-0 small">
+                  Create your account and join our community of board game enthusiasts
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>

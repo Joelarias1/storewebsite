@@ -8,7 +8,6 @@ import { FamilyComponent } from '../pages/family/family.component';
 import { StrategyComponent } from '../pages/strategy/strategy.component';
 
 // Auth
-import { LoginComponent } from '../pages/auth/login/login.component';
 import { RegisterComponent } from '../pages/auth/register/register.component';
 
 // Rutas
@@ -18,7 +17,6 @@ export const routes: Routes = [
   { path: 'strategy', component: StrategyComponent },
   { path: 'classic', component: ClassicComponent },
   { path: 'family', component: FamilyComponent },
-  { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: '**', redirectTo: '' }, // Ruta para 404, redirige al home
 ];
