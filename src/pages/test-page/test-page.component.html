@@ -1,0 +1,42 @@
+<div class="page-container">
+  <div class="content-wrap">
+    <div class="container mt-5">
+      <div class="card welcome-card">
+        <div class="card-body">
+          <h2 class="card-title">{{greeting}}, {{userInfo?.fullName}}! 👋</h2>
+          <p class="card-text">Tu registro ha sido exitoso.</p>
+          
+          <div class="user-info mt-4">
+            <h3>Información de tu cuenta</h3>
+            <div class="info-item">
+              <i class="bi bi-person-circle"></i>
+              <span>Nombre de usuario: {{userInfo?.username}}</span>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-envelope"></i>
+              <span>Email: {{userInfo?.email}}</span>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-calendar"></i>
+              <span>Fecha de registro: {{userInfo?.joinDate | date:'dd/MM/yyyy HH:mm'}}</span>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-clock"></i>
+              <span>Hora actual: {{currentTime | date:'HH:mm'}}</span>
+            </div>
+          </div>
+
+          <div class="actions mt-4">
+            <button class="btn btn-primary me-2" (click)="goToHome()">
+              <i class="bi bi-house-door"></i> Ir al inicio
+            </button>
+            <button class="btn btn-outline-primary">
+              <i class="bi bi-gear"></i> Configurar perfil
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
