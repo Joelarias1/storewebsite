@@ -1,0 +1,224 @@
+<div *ngIf="category" class="space-y-6">
+  <!-- Encabezado de la categoría -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <div 
+        class="h-12 w-12 rounded-lg flex items-center justify-center" 
+        [ngClass]="getColorClass(category.color)"
+      >
+        <span class="text-xl">{{ category.icon }}</span>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-white">{{ category.name }}</h1>
+        <p class="text-gray-400">{{ category.description }}</p>
+      </div>
+    </div>
+    <a 
+      routerLink="/dashboard/categorias" 
+      class="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-md"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      Volver a categorías
+    </a>
+  </div>
+  
+  <!-- Barra de herramientas (búsqueda, filtros, botón crear) -->
+  <div class="flex flex-col sm:flex-row justify-between space-y-3 sm:space-y-0 sm:space-x-4 bg-gray-800 p-4 rounded-lg">
+    <div class="flex flex-1 space-x-2">
+      <div class="relative flex-1">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery"
+          placeholder="Buscar temas..."
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 pl-10 pr-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+      <button 
+        (click)="searchTopics()"
+        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-md"
+      >
+        Buscar
+      </button>
+    </div>
+    
+    <div class="flex space-x-2 sm:space-x-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-sm text-gray-400">Ordenar:</span>
+        <div class="flex rounded-md overflow-hidden border border-gray-600">
+          <button 
+            (click)="sortTopics('recent')" 
+            class="px-3 py-1 text-sm"
+            [ngClass]="sortBy === 'recent' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+          >
+            Recientes
+          </button>
+          <button 
+            (click)="sortTopics('popular')" 
+            class="px-3 py-1 text-sm"
+            [ngClass]="sortBy === 'popular' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+          >
+            Populares
+          </button>
+          <button 
+            (click)="sortTopics('unanswered')" 
+            class="px-3 py-1 text-sm"
+            [ngClass]="sortBy === 'unanswered' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
+          >
+            Sin respuestas
+          </button>
+        </div>
+      </div>
+      
+      <button 
+        (click)="createNewTopic()" 
+        class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-sm"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Nuevo tema
+      </button>
+    </div>
+  </div>
+  
+  <!-- Lista de temas -->
+  <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <div class="min-w-full divide-y divide-gray-700">
+      <!-- Encabezado de la tabla -->
+      <div class="bg-gray-900 px-6 py-3">
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-7 lg:col-span-8 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Tema
+          </div>
+          <div class="col-span-2 lg:col-span-1 text-center text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:block">
+            Respuestas
+          </div>
+          <div class="col-span-2 lg:col-span-1 text-center text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:block">
+            Vistas
+          </div>
+          <div class="col-span-5 lg:col-span-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider sm:hidden">
+            Estadísticas
+          </div>
+        </div>
+      </div>
+      
+      <!-- Lista de temas -->
+      <div class="divide-y divide-gray-700">
+        <div *ngFor="let topic of topics" class="px-6 py-4 hover:bg-gray-700">
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-7 lg:col-span-8">
+              <div class="flex items-start">
+                <!-- Icono de estado (fijado, bloqueado, popular) -->
+                <div class="flex-shrink-0 mr-3 mt-1">
+                  <svg *ngIf="topic.isPinned" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  <svg *ngIf="!topic.isPinned && topic.isLocked" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <svg *ngIf="!topic.isPinned && !topic.isLocked && topic.isHot" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                  </svg>
+                </div>
+                
+                <div class="flex-1">
+                  <a href="#" class="text-blue-400 hover:text-blue-300 font-medium block mb-1">{{ topic.title }}</a>
+                  <div class="flex items-center text-xs text-gray-400">
+                    <img [src]="topic.authorAvatar" alt="Avatar" class="h-5 w-5 rounded-full mr-2">
+                    <span>{{ topic.author }}</span>
+                    <span class="mx-2">•</span>
+                    <span>{{ topic.lastActivity | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Estadísticas (móvil) -->
+            <div class="col-span-5 sm:hidden">
+              <div class="flex justify-between text-gray-400 text-xs">
+                <div>
+                  <span class="font-bold text-white">{{ topic.replies }}</span> respuestas
+                </div>
+                <div>
+                  <span class="font-bold text-white">{{ topic.views }}</span> vistas
+                </div>
+              </div>
+            </div>
+            
+            <!-- Respuestas (escritorio) -->
+            <div class="col-span-2 lg:col-span-1 hidden sm:block">
+              <div class="text-center">
+                <div class="text-sm font-medium text-white">{{ topic.replies }}</div>
+                <div class="text-xs text-gray-400">respuestas</div>
+              </div>
+            </div>
+            
+            <!-- Vistas (escritorio) -->
+            <div class="col-span-2 lg:col-span-1 hidden sm:block">
+              <div class="text-center">
+                <div class="text-sm font-medium text-white">{{ topic.views }}</div>
+                <div class="text-xs text-gray-400">vistas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Paginación -->
+  <div class="flex justify-between items-center">
+    <div class="text-sm text-gray-400">
+      Mostrando {{ topics.length }} de {{ category.topics }} temas
+    </div>
+    
+    <div class="flex space-x-1">
+      <button 
+        (click)="prevPage()" 
+        [disabled]="currentPage === 1"
+        [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+        class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-md"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      
+      <button 
+        *ngFor="let page of [].constructor(totalPages); let i = index" 
+        (click)="changePage(i + 1)" 
+        [ngClass]="{'bg-blue-600 text-white': currentPage === i + 1, 'bg-gray-700 text-gray-300 hover:bg-gray-600': currentPage !== i + 1}"
+        class="px-3 py-1 rounded-md"
+      >
+        {{ i + 1 }}
+      </button>
+      
+      <button 
+        (click)="nextPage()" 
+        [disabled]="currentPage === totalPages"
+        [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+        class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-md"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje de carga o error -->
+<div *ngIf="!category" class="bg-gray-800 rounded-lg p-8 text-center">
+  <div class="text-xl text-gray-400">
+    <span *ngIf="categoryId !== 0">Categoría no encontrada o cargando...</span>
+    <span *ngIf="categoryId === 0">Cargando categoría...</span>
+  </div>
+</div> 

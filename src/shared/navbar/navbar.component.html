@@ -1,44 +1,70 @@
-<header class="texto-claro py-3">
-    <div class="container">
-      <div
-        class="d-flex justify-content-between justify-content-sm-center align-items-center my-3 position-relative gap-2"
-      >
-        <h1 class="mb-0 mx-0 mx-sm-auto">Tabletop Treasures</h1>
-        <button
-          class="navbar-toggler d-lg-none position-absolute end-0"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
+<nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50 shadow-lg">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo y nombre -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd" />
+          </svg>
+          <span class="text-white font-bold text-xl">ForoDev</span>
+        </a>
+      </div>
+
+      <!-- Menú de navegación - Escritorio -->
+      <div class="hidden md:flex items-center space-x-1">
+        <a routerLink="/" routerLinkActive="bg-gray-700" [routerLinkActiveOptions]="{exact: true}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Inicio
+        </a>
+        <a routerLink="/forums" routerLinkActive="bg-gray-700" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Foros
+        </a>
+        <a routerLink="/search" routerLinkActive="bg-gray-700" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+          Buscar
+        </a>
+        <div class="relative ml-3">
+          <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500" id="user-menu-button">
+            <span class="sr-only">Abrir menú de usuario</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 hover:text-white" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Botones de autenticación -->
+        <div class="ml-3 flex items-center space-x-2">
+          <a routerLink="/login" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Iniciar sesión
+          </a>
+          <a routerLink="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+            Registrarse
+          </a>
+        </div>
+      </div>
+
+      <!-- Botón móvil -->
+      <div class="md:hidden flex items-center">
+        <button type="button" class="text-gray-400 hover:text-white focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+          <span class="sr-only">Abrir menú principal</span>
+          <!-- Ícono de menú -->
+          <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
         </button>
       </div>
-      <nav class="navbar navbar-expand-lg p-0 shadow-md">
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav mx-auto d-flex align-items-center gap-4">
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">All Games</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/strategy" routerLinkActive="active">Strategy</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/family" routerLinkActive="active">Family</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/party" routerLinkActive="active">Party</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" routerLink="/classic" routerLinkActive="active">Classic</a>
-            </li>
-            <li class="nav-item">
-              <a routerLink="/register" class="btn btn-login rounded-pill">
-                <i class="fas fa-user texto-principal"></i>
-                <span class="ms-2 texto-principal">Join</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
     </div>
-</header>
+  </div>
+
+  <!-- Menú móvil -->
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="space-y-1 px-2 pb-3 pt-2">
+      <a routerLink="/" routerLinkActive="bg-gray-700" [routerLinkActiveOptions]="{exact: true}" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Inicio</a>
+      <a routerLink="/forums" routerLinkActive="bg-gray-700" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Foros</a>
+      <a routerLink="/search" routerLinkActive="bg-gray-700" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Buscar</a>
+      <div class="border-t border-gray-700 pt-2 mt-2">
+        <a routerLink="/login" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Iniciar sesión</a>
+        <a routerLink="/register" class="block bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-base font-medium mt-1">Registrarse</a>
+      </div>
+    </div>
+  </div>
+</nav>

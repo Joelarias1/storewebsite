@@ -1,0 +1,249 @@
+<div>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-white mb-2">Gestión de Categorías</h1>
+    <p class="text-gray-400">Administra las categorías del foro. Puedes crear, editar o eliminar categorías.</p>
+  </div>
+  
+  <!-- Botón para añadir categoría -->
+  <div class="mb-6 flex justify-end">
+    <button 
+      (click)="toggleAddForm()" 
+      class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md shadow-sm"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      {{ showAddForm ? 'Cancelar' : 'Añadir Categoría' }}
+    </button>
+  </div>
+  
+  <!-- Formulario para añadir categoría -->
+  <div *ngIf="showAddForm" class="mb-8 bg-gray-800 rounded-lg p-6 shadow-md">
+    <h2 class="text-xl font-semibold text-white mb-4">Nueva Categoría</h2>
+    <div class="space-y-4">
+      <div>
+        <label for="categoryName" class="block text-sm font-medium text-gray-300 mb-1">Nombre</label>
+        <input 
+          type="text" 
+          id="categoryName" 
+          [(ngModel)]="newCategory.name" 
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Nombre de la categoría"
+        />
+      </div>
+      
+      <div>
+        <label for="categoryDescription" class="block text-sm font-medium text-gray-300 mb-1">Descripción</label>
+        <textarea 
+          id="categoryDescription" 
+          [(ngModel)]="newCategory.description" 
+          rows="3" 
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Descripción breve de la categoría"
+        ></textarea>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Icono</label>
+          <div class="grid grid-cols-5 gap-2">
+            <button 
+              *ngFor="let icon of availableIcons" 
+              type="button"
+              (click)="newCategory.icon = icon"
+              class="flex items-center justify-center h-10 w-10 border rounded-md"
+              [ngClass]="newCategory.icon === icon ? 'border-blue-500 bg-blue-900/30' : 'border-gray-600 hover:bg-gray-700'"
+            >
+              <span class="text-lg">{{ icon }}</span>
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Color</label>
+          <div class="grid grid-cols-4 gap-2">
+            <button 
+              *ngFor="let color of availableColors" 
+              type="button"
+              (click)="newCategory.color = color"
+              class="h-10 w-10 rounded-md border-2"
+              [ngClass]="newCategory.color === color ? 'border-white' : 'border-transparent'"
+              [ngStyle]="{'background-color': color}"
+            ></button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex justify-end mt-4 space-x-3">
+        <button 
+          type="button" 
+          (click)="toggleAddForm()" 
+          class="px-4 py-2 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-700"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          (click)="addCategory()" 
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          [disabled]="!newCategory.name"
+          [ngClass]="{'opacity-50 cursor-not-allowed': !newCategory.name}"
+        >
+          Guardar Categoría
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Formulario para editar categoría -->
+  <div *ngIf="isEditMode" class="mb-8 bg-gray-800 rounded-lg p-6 shadow-md">
+    <h2 class="text-xl font-semibold text-white mb-4">Editar Categoría</h2>
+    <div class="space-y-4">
+      <div>
+        <label for="editCategoryName" class="block text-sm font-medium text-gray-300 mb-1">Nombre</label>
+        <input 
+          type="text" 
+          id="editCategoryName" 
+          [(ngModel)]="editingCategory.name" 
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+      
+      <div>
+        <label for="editCategoryDescription" class="block text-sm font-medium text-gray-300 mb-1">Descripción</label>
+        <textarea 
+          id="editCategoryDescription" 
+          [(ngModel)]="editingCategory.description" 
+          rows="3" 
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Icono</label>
+          <div class="grid grid-cols-5 gap-2">
+            <button 
+              *ngFor="let icon of availableIcons" 
+              type="button"
+              (click)="editingCategory.icon = icon"
+              class="flex items-center justify-center h-10 w-10 border rounded-md"
+              [ngClass]="editingCategory.icon === icon ? 'border-blue-500 bg-blue-900/30' : 'border-gray-600 hover:bg-gray-700'"
+            >
+              <span class="text-lg">{{ icon }}</span>
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-1">Color</label>
+          <div class="grid grid-cols-4 gap-2">
+            <button 
+              *ngFor="let color of availableColors" 
+              type="button"
+              (click)="editingCategory.color = color"
+              class="h-10 w-10 rounded-md border-2"
+              [ngClass]="editingCategory.color === color ? 'border-white' : 'border-transparent'"
+              [ngStyle]="{'background-color': color}"
+            ></button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flex justify-end mt-4 space-x-3">
+        <button 
+          type="button" 
+          (click)="cancelEdit()" 
+          class="px-4 py-2 border border-gray-600 text-gray-300 rounded-md hover:bg-gray-700"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          (click)="saveEdit()" 
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          [disabled]="!editingCategory.name"
+          [ngClass]="{'opacity-50 cursor-not-allowed': !editingCategory.name}"
+        >
+          Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Lista de categorías -->
+  <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <div class="min-w-full divide-y divide-gray-700">
+      <div class="bg-gray-900 px-6 py-3">
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-7 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Categoría
+          </div>
+          <div class="col-span-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Temas
+          </div>
+          <div class="col-span-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Acciones
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-gray-700">
+        <div *ngFor="let category of categories" class="px-6 py-4 hover:bg-gray-700">
+          <div class="grid grid-cols-12 gap-4 items-center">
+            <div class="col-span-7">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10 rounded-md flex items-center justify-center" [ngClass]="getColorClass(category.color)">
+                  <span class="text-lg">{{ category.icon }}</span>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-white">{{ category.name }}</div>
+                  <div class="text-sm text-gray-400">{{ category.description }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-span-2">
+              <div class="text-center">
+                <div class="text-sm text-white">{{ category.topics }}</div>
+                <div class="text-xs text-gray-400">Temas</div>
+              </div>
+            </div>
+            
+            <div class="col-span-3">
+              <div class="flex justify-center space-x-2">
+                <button 
+                  (click)="startEdit(category)"
+                  class="p-2 text-blue-400 hover:text-blue-300 rounded-full hover:bg-gray-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                
+                <button 
+                  (click)="deleteCategory(category.id)"
+                  class="p-2 text-red-400 hover:text-red-300 rounded-full hover:bg-gray-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                
+                <a 
+                  routerLink="/dashboard/categorias/{{ category.id }}"
+                  class="p-2 text-green-400 hover:text-green-300 rounded-full hover:bg-gray-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

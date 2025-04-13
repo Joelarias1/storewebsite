@@ -1,0 +1,245 @@
+<div class="container mx-auto p-4">
+  <!-- Mensajes de feedback -->
+  <div *ngIf="successMessage" class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow">
+    <p>{{ successMessage }}</p>
+  </div>
+  <div *ngIf="errorMessage" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Perfil del usuario -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <!-- Cabecera del perfil -->
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Mi Perfil</h1>
+      <div>
+        <button *ngIf="!isEditingProfile && !isChangingPassword" 
+                (click)="toggleEditProfile()"
+                class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition mr-2">
+          Editar Perfil
+        </button>
+        <button *ngIf="!isEditingProfile && !isChangingPassword" 
+                (click)="toggleChangePassword()"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition">
+          Cambiar Contraseña
+        </button>
+      </div>
+    </div>
+
+    <!-- Modo visualización -->
+    <div *ngIf="!isEditingProfile && !isChangingPassword && user" class="p-6">
+      <div class="flex flex-col md:flex-row">
+        <!-- Avatar -->
+        <div class="md:w-1/4 flex justify-center mb-6 md:mb-0">
+          <div class="relative">
+            <img [src]="user.avatar" alt="Avatar de {{ user.fullName }}" 
+                 class="w-36 h-36 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-md">
+          </div>
+        </div>
+        
+        <!-- Información del perfil -->
+        <div class="md:w-3/4 md:pl-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Columna 1 -->
+            <div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre Completo</h3>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ user.fullName }}</p>
+              </div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre de Usuario</h3>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ user.username }}</p>
+              </div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</h3>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ user.email }}</p>
+              </div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Rol</h3>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ user.role }}</p>
+              </div>
+            </div>
+            
+            <!-- Columna 2 -->
+            <div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Miembro desde</h3>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ user.joinDate | date:'dd/MM/yyyy' }}</p>
+              </div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Ubicación</h3>
+                <p class="text-lg font-semibold text-gray-800 dark:text-white">{{ user.location || 'No especificada' }}</p>
+              </div>
+              <div class="mb-4">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Sitio Web</h3>
+                <p *ngIf="user.website" class="text-lg font-semibold text-blue-500 dark:text-blue-400">
+                  <a [href]="user.website" target="_blank">{{ user.website }}</a>
+                </p>
+                <p *ngIf="!user.website" class="text-lg font-semibold text-gray-800 dark:text-white">No especificado</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Biografía -->
+          <div class="mt-4">
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Biografía</h3>
+            <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ user.bio || 'No hay información biográfica disponible.' }}</p>
+          </div>
+          
+          <!-- Redes sociales -->
+          <div class="mt-6">
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Redes Sociales</h3>
+            <div class="flex space-x-4">
+              <a *ngIf="user.social?.twitter" [href]="'https://twitter.com/' + user.social.twitter" target="_blank" 
+                 class="text-blue-400 hover:text-blue-500">
+                <i class="fab fa-twitter text-xl"></i>
+              </a>
+              <a *ngIf="user.social?.github" [href]="'https://github.com/' + user.social.github" target="_blank"
+                 class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                <i class="fab fa-github text-xl"></i>
+              </a>
+              <a *ngIf="user.social?.linkedin" [href]="'https://linkedin.com/in/' + user.social.linkedin" target="_blank"
+                 class="text-blue-600 hover:text-blue-700">
+                <i class="fab fa-linkedin text-xl"></i>
+              </a>
+              <span *ngIf="!user.social?.twitter && !user.social?.github && !user.social?.linkedin" 
+                    class="text-gray-500 dark:text-gray-400">
+                No hay redes sociales vinculadas
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Formulario de edición de perfil -->
+    <div *ngIf="isEditingProfile && user" class="p-6">
+      <div class="flex flex-col md:flex-row">
+        <!-- Avatar -->
+        <div class="md:w-1/4 flex justify-center mb-6 md:mb-0">
+          <div class="relative">
+            <img [src]="user.avatar" alt="Avatar" class="w-36 h-36 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-md">
+            <button class="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-md">
+              <i class="fas fa-camera"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Formulario -->
+        <div class="md:w-3/4 md:pl-8">
+          <form (ngSubmit)="saveProfile()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Columna 1 -->
+              <div>
+                <div class="mb-4">
+                  <label for="fullName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre Completo</label>
+                  <input type="text" id="fullName" name="fullName" [(ngModel)]="user.fullName" required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+                <div class="mb-4">
+                  <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre de Usuario</label>
+                  <input type="text" id="username" name="username" [(ngModel)]="user.username" required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+                <div class="mb-4">
+                  <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                  <input type="email" id="email" name="email" [(ngModel)]="user.email" required
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+                <div class="mb-4">
+                  <label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ubicación</label>
+                  <input type="text" id="location" name="location" [(ngModel)]="user.location"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+              </div>
+              
+              <!-- Columna 2 -->
+              <div>
+                <div class="mb-4">
+                  <label for="website" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sitio Web</label>
+                  <input type="url" id="website" name="website" [(ngModel)]="user.website"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+                <div class="mb-4">
+                  <label for="twitter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Twitter</label>
+                  <div class="flex">
+                    <span class="inline-flex items-center px-3 text-gray-500 bg-gray-100 dark:bg-gray-600 dark:text-gray-300 border border-r-0 border-gray-300 dark:border-gray-600 rounded-l-md">
+                      &#64;
+                    </span>
+                    <input type="text" id="twitter" name="twitter" [(ngModel)]="user.social.twitter"
+                          class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-r-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <label for="github" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">GitHub</label>
+                  <input type="text" id="github" name="github" [(ngModel)]="user.social.github"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+                <div class="mb-4">
+                  <label for="linkedin" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">LinkedIn</label>
+                  <input type="text" id="linkedin" name="linkedin" [(ngModel)]="user.social.linkedin"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                </div>
+              </div>
+            </div>
+            
+            <!-- Biografía -->
+            <div class="mb-6">
+              <label for="bio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Biografía</label>
+              <textarea id="bio" name="bio" rows="4" [(ngModel)]="user.bio"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"></textarea>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3">
+              <button type="button" (click)="toggleEditProfile()" 
+                      class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+                Cancelar
+              </button>
+              <button type="submit" 
+                      class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Formulario de cambio de contraseña -->
+    <div *ngIf="isChangingPassword" class="p-6">
+      <form (ngSubmit)="changePassword()" class="max-w-lg mx-auto">
+        <div class="mb-6">
+          <label for="currentPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Contraseña Actual</label>
+          <input type="password" id="currentPassword" name="currentPassword" [(ngModel)]="passwordData.currentPassword" required
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+        </div>
+        
+        <div class="mb-6">
+          <label for="newPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nueva Contraseña</label>
+          <input type="password" id="newPassword" name="newPassword" [(ngModel)]="passwordData.newPassword" required
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">La contraseña debe tener al menos 8 caracteres</p>
+        </div>
+        
+        <div class="mb-6">
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirmar Contraseña</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="passwordData.confirmPassword" required
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="flex justify-end space-x-3">
+          <button type="button" (click)="toggleChangePassword()" 
+                  class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+            Cancelar
+          </button>
+          <button type="submit" 
+                  class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Actualizar Contraseña
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

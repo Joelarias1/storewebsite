@@ -1,0 +1,184 @@
+<div>
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-white mb-2">Gestión de Temas</h1>
+    <p class="text-gray-400">Administra los temas del foro. Puedes filtrar, ver detalles, ocultar o eliminar temas.</p>
+  </div>
+  
+  <!-- Filtros -->
+  <div class="mb-6 bg-gray-800 rounded-lg p-4 shadow-md">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Filtro por categoría -->
+      <div>
+        <label for="categoryFilter" class="block text-sm font-medium text-gray-300 mb-1">Categoría</label>
+        <select 
+          id="categoryFilter" 
+          [(ngModel)]="filters.category" 
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option [value]="0">Todas las categorías</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+      
+      <!-- Filtro por estado -->
+      <div>
+        <label for="statusFilter" class="block text-sm font-medium text-gray-300 mb-1">Estado</label>
+        <select 
+          id="statusFilter" 
+          [(ngModel)]="filters.status" 
+          class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option *ngFor="let status of statusOptions" [value]="status.value">{{ status.label }}</option>
+        </select>
+      </div>
+      
+      <!-- Filtro por búsqueda -->
+      <div>
+        <label for="searchFilter" class="block text-sm font-medium text-gray-300 mb-1">Buscar</label>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="searchFilter" 
+            [(ngModel)]="filters.search" 
+            class="w-full bg-gray-700 border border-gray-600 rounded-md py-2 pl-10 pr-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Buscar temas..."
+          />
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botón para resetear filtros -->
+    <div class="mt-4 flex justify-end">
+      <button 
+        (click)="resetFilters()" 
+        class="px-4 py-2 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600 flex items-center"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Resetear Filtros
+      </button>
+    </div>
+  </div>
+  
+  <!-- Lista de temas -->
+  <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <div class="min-w-full divide-y divide-gray-700">
+      <div class="bg-gray-900 px-6 py-3">
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-6 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Tema
+          </div>
+          <div class="col-span-1 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Vistas
+          </div>
+          <div class="col-span-1 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Respuestas
+          </div>
+          <div class="col-span-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Estado
+          </div>
+          <div class="col-span-2 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Acciones
+          </div>
+        </div>
+      </div>
+      
+      <div class="divide-y divide-gray-700">
+        <div *ngFor="let topic of filteredTopics" class="px-6 py-4 hover:bg-gray-700">
+          <div class="grid grid-cols-12 gap-4 items-center">
+            <div class="col-span-6">
+              <div>
+                <div class="text-sm font-medium text-white">{{ topic.title }}</div>
+                <div class="text-xs text-gray-400 mt-1">
+                  Categoría: <span class="text-blue-400">{{ topic.category }}</span> | 
+                  Autor: <span class="text-green-400">{{ topic.author }}</span> | 
+                  Fecha: {{ topic.createdAt }}
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-span-1">
+              <div class="text-center">
+                <div class="text-sm text-white">{{ topic.views }}</div>
+              </div>
+            </div>
+            
+            <div class="col-span-1">
+              <div class="text-center">
+                <div class="text-sm text-white">{{ topic.comments }}</div>
+              </div>
+            </div>
+            
+            <div class="col-span-2">
+              <span class="px-2 py-1 text-xs rounded-full border" [ngClass]="getStatusClass(topic.status)">
+                {{ getStatusLabel(topic.status) }}
+              </span>
+            </div>
+            
+            <div class="col-span-2">
+              <div class="flex justify-center space-x-2">
+                <a 
+                  routerLink="/dashboard/temas/{{ topic.id }}"
+                  class="p-2 text-blue-400 hover:text-blue-300 rounded-full hover:bg-gray-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </a>
+                
+                <button 
+                  (click)="hideTopic(topic.id)"
+                  class="p-2 text-yellow-400 hover:text-yellow-300 rounded-full hover:bg-gray-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path *ngIf="topic.status === 'active'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    <path *ngIf="topic.status === 'hidden'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path *ngIf="topic.status === 'hidden'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+                
+                <button 
+                  (click)="deleteTopic(topic.id)"
+                  class="p-2 text-red-400 hover:text-red-300 rounded-full hover:bg-gray-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mensaje de sin resultados -->
+        <div *ngIf="filteredTopics.length === 0" class="px-6 py-8 text-center">
+          <div class="text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-lg font-medium">No se encontraron temas</p>
+            <p class="text-sm mt-1">Prueba con otros filtros o crea un nuevo tema</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Paginación (simplificada) -->
+  <div class="mt-6 flex justify-center">
+    <nav class="flex items-center space-x-2">
+      <button class="px-3 py-1 rounded-md border border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700">Anterior</button>
+      <button class="px-3 py-1 rounded-md border border-gray-700 bg-blue-600 text-white">1</button>
+      <button class="px-3 py-1 rounded-md border border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700">2</button>
+      <button class="px-3 py-1 rounded-md border border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700">3</button>
+      <button class="px-3 py-1 rounded-md border border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700">Siguiente</button>
+    </nav>
+  </div>
+</div> 

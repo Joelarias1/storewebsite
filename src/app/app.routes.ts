@@ -1,23 +1,39 @@
 import { Routes } from '@angular/router';
 
 import { HomeComponent } from '../pages/home/home.component';
-import { PartyComponent } from '../pages/party/party.component';
-import { ClassicComponent } from '../pages/classic/classic.component';
-import { FamilyComponent } from '../pages/family/family.component';
-import { StrategyComponent } from '../pages/strategy/strategy.component';
 
 // Auth
 import { RegisterComponent } from '../pages/auth/register/register.component';
-import { TestPageComponent } from '../pages/test-page/test-page.component';
+import { LoginComponent } from '../pages/auth/login/login.component';
+import { ForgotPasswordComponent } from '../pages/auth/forgot-password/forgot-password.component';
+
+// Dashboard
+import { DashboardLayoutComponent } from '../layouts/dashboard-layout/dashboard-layout.component';
+import { DashboardComponent } from '../pages/dashboard/dashboard.component';
+import { CategoriesComponent } from '../pages/dashboard/categories/categories.component';
+import { NotFoundComponent } from '../pages/dashboard/not-found/not-found.component';
 
 // Rutas
 export const routes: Routes = [
+  // Rutas públicas
   { path: '', component: HomeComponent }, // localhost:4200/
-  { path: 'party', component: PartyComponent }, // localhost:4200/party
-  { path: 'strategy', component: StrategyComponent },
-  { path: 'classic', component: ClassicComponent },
-  { path: 'family', component: FamilyComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'test-page', component: TestPageComponent },
-  { path: '**', redirectTo: '' }, // Ruta para 404, redirige al home
+  { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  
+  // Rutas del panel de administración (con layout de dashboard)
+  { 
+    path: 'dashboard', 
+    component: DashboardLayoutComponent,
+    children: [
+      { path: '', component: DashboardComponent },
+      { path: 'categorias', component: CategoriesComponent },
+      { path: 'categorias/:id', loadComponent: () => import('../pages/dashboard/category-view/category-view.component').then(c => c.CategoryViewComponent) },
+      // Página 404 para el dashboard (captura cualquier ruta inexistente)
+      { path: '**', component: NotFoundComponent }
+    ]
+  },
+  
+  // Redirección para rutas no encontradas (fuera del dashboard)
+  { path: '**', redirectTo: '' }
 ];
