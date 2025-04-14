@@ -1,0 +1,39 @@
+/* Estilos para la vista de tema/hilo */
+.author-info {
+  background-color: rgba(55, 65, 81, 0.5); /* bg-gray-700/50 */
+}
+
+.comment {
+  border-top: 1px solid #374151; /* border-gray-700 */
+}
+
+.prose-invert pre {
+  background-color: #1f2937 !important; /* bg-gray-800 */
+  color: #d1d5db !important; /* text-gray-300 */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose-invert code {
+  font-family: \"Courier New\", Courier, monospace;
+  font-size: 0.9em;
+}
+
+/* Estilos específicos para el bloque de código dentro del pre */
+.prose-invert pre code {
+  background-color: transparent !important;
+  padding: 0;
+  color: inherit !important;
+}
+
+.ql-editor {
+  min-height: 150px;
+  max-height: 400px;
+  background-color: #374151; /* bg-gray-700 */
+  color: #e5e7eb; /* text-gray-200 */
+  border: 1px solid #4b5563; /* border-gray-600 */
+  border-radius: 0.5rem;
+} 

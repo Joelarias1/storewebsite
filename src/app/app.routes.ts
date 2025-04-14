@@ -18,6 +18,7 @@ import { ProfileComponent } from '../pages/dashboard/profile/profile.component';
 import { SearchComponent } from '../pages/search/search.component';
 import { NewThreadComponent } from '../pages/new-thread/new-thread.component';
 import { ForumsComponent } from '../pages/forums/forums.component';
+import { ThreadViewComponent } from '../pages/thread-view/thread-view.component';
 
 // Rutas
 export const routes: Routes = [
@@ -33,6 +34,7 @@ export const routes: Routes = [
   { path: 'category/:categoryId', loadComponent: () => import('../pages/dashboard/category-view/category-view.component').then(c => c.CategoryViewComponent) },
   { path: 'category/:categoryId/new-thread', component: NewThreadComponent },
   { path: 'new-thread', component: NewThreadComponent },
+  { path: 'thread/:threadId', component: ThreadViewComponent },
   
   // Rutas del panel de administración (con layout de dashboard)
   { 
