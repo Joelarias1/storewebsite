@@ -1,0 +1,143 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Encabezado -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-200">Crear nuevo tema</h1>
+      <p class="text-gray-400 mt-2">Comparte tus ideas, preguntas o comentarios con la comunidad.</p>
+    </div>
+    
+    <!-- Formulario -->
+    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+      <div class="p-6">
+        <!-- Título del tema -->
+        <div class="mb-6">
+          <label for="thread-title" class="block text-sm font-medium text-gray-400 mb-2">Título <span class="text-red-500">*</span></label>
+          <input 
+            type="text" 
+            id="thread-title" 
+            [(ngModel)]="threadData.title" 
+            placeholder="Escribe un título claro y descriptivo" 
+            class="w-full bg-gray-700 text-white border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [ngClass]="{'border-red-500 ring-1 ring-red-500': formErrors['title']}"
+          >
+          <p *ngIf="formErrors['title']" class="mt-1 text-sm text-red-500">{{ formErrors['title'] }}</p>
+        </div>
+        
+        <!-- Selector de categoría -->
+        <div class="mb-6">
+          <label for="category" class="block text-sm font-medium text-gray-400 mb-2">Categoría <span class="text-red-500">*</span></label>
+          <select 
+            id="category" 
+            [(ngModel)]="threadData.categoryId" 
+            class="w-full bg-gray-700 text-white border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [ngClass]="{'border-red-500 ring-1 ring-red-500': formErrors['category']}"
+          >
+            <option value="" disabled selected>Selecciona una categoría</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+          </select>
+          <p *ngIf="formErrors['category']" class="mt-1 text-sm text-red-500">{{ formErrors['category'] }}</p>
+        </div>
+        
+        <!-- Etiquetas -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-400 mb-2">Etiquetas (opcional)</label>
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <div *ngFor="let tag of threadData.tags" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm tag-pill">
+              {{ tag }}
+              <button 
+                (click)="removeTag(tag)" 
+                class="ml-2 text-gray-400 hover:text-gray-200 focus:outline-none"
+              >
+                &times;
+              </button>
+            </div>
+            <div *ngIf="threadData.tags.length === 0" class="text-gray-500 text-sm italic">
+              Agrega etiquetas para clasificar tu tema
+            </div>
+          </div>
+          
+          <div class="flex">
+            <input 
+              type="text" 
+              [(ngModel)]="newTag" 
+              (keyup.enter)="addTag()"
+              placeholder="Agrega una etiqueta y presiona Enter" 
+              class="flex-1 bg-gray-700 text-white border-0 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button 
+              (click)="addTag()" 
+              class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Añadir
+            </button>
+          </div>
+          <p class="mt-1 text-xs text-gray-500">Hasta 5 etiquetas para ayudar a otros a encontrar tu tema.</p>
+        </div>
+        
+        <!-- Contenido del tema -->
+        <div class="mb-6">
+          <label for="thread-content" class="block text-sm font-medium text-gray-400 mb-2">Contenido <span class="text-red-500">*</span></label>
+          <textarea 
+            id="thread-content" 
+            [(ngModel)]="threadData.content" 
+            placeholder="Escribe el contenido de tu tema. Puedes usar Markdown para dar formato."
+            rows="10" 
+            class="w-full bg-gray-700 text-white border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [ngClass]="{'border-red-500 ring-1 ring-red-500': formErrors['content']}"
+          ></textarea>
+          <p *ngIf="formErrors['content']" class="mt-1 text-sm text-red-500">{{ formErrors['content'] }}</p>
+          <p class="mt-1 text-xs text-gray-500">
+            Soporta Markdown: **negrita**, *cursiva*, `código`, [enlace](url), etc.
+          </p>
+        </div>
+        
+        <!-- Reglas y guías -->
+        <div class="mb-6 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+          <h3 class="text-sm font-medium text-gray-300 mb-2">Antes de publicar:</h3>
+          <ul class="text-sm text-gray-400 list-disc list-inside space-y-1">
+            <li>Asegúrate de que tu tema no ha sido publicado anteriormente.</li>
+            <li>Proporciona información clara y relevante.</li>
+            <li>Sé respetuoso con los demás miembros de la comunidad.</li>
+            <li>Evita contenido ofensivo, spam o publicidad no permitida.</li>
+          </ul>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="flex justify-end gap-3">
+          <button 
+            (click)="cancelCreation()" 
+            class="px-5 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+          >
+            Cancelar
+          </button>
+          <button 
+            (click)="submitThread()" 
+            [disabled]="isSubmitting"
+            class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center"
+            [ngClass]="{'opacity-70 cursor-not-allowed': isSubmitting}"
+          >
+            <span *ngIf="isSubmitting" class="mr-2">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+            </span>
+            {{ isSubmitting ? 'Publicando...' : 'Publicar tema' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Vista previa (opcional) -->
+    <div *ngIf="threadData.content" class="mt-8">
+      <h2 class="text-lg font-medium text-gray-300 mb-4">Vista previa:</h2>
+      <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h1 class="text-xl font-bold text-white mb-4">{{ threadData.title || 'Título del tema' }}</h1>
+        <div class="prose prose-invert max-w-none">
+          <!-- Aquí se mostraría el contenido renderizado con Markdown -->
+          <p class="text-gray-300 whitespace-pre-wrap">{{ threadData.content }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

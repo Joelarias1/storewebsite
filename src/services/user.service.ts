@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
+export interface UserPreferences {
+  theme: string;
+}
+
 export interface User {
   fullName: string;
   username: string;
@@ -16,6 +20,7 @@ export interface User {
     github: string;
     linkedin: string;
   };
+  preferences?: UserPreferences;
 }
 
 export interface PasswordChangeData {
@@ -42,6 +47,9 @@ export class UserService {
       twitter: 'juanperezdev',
       github: 'juanperez',
       linkedin: 'juan-perez'
+    },
+    preferences: {
+      theme: 'dark'
     }
   };
 
@@ -61,6 +69,16 @@ export class UserService {
   changePassword(passwordData: PasswordChangeData): Observable<boolean> {
     // En una aplicación real, aquí validaríamos la contraseña actual
     // y enviaríamos la nueva contraseña al backend
+    return of(true);
+  }
+
+  updatePreferences(preferences: UserPreferences): Observable<boolean> {
+    // En una aplicación real, aquí enviaríamos las preferencias al backend
+    if (this.mockUser.preferences) {
+      this.mockUser.preferences = {...preferences};
+    } else {
+      this.mockUser.preferences = preferences;
+    }
     return of(true);
   }
 } 

@@ -1,0 +1,204 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Cabecera de búsqueda -->
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-200 mb-2">Resultados de búsqueda</h1>
+    <div class="flex flex-col sm:flex-row items-center bg-gray-800 rounded-lg overflow-hidden p-2">
+      <div class="relative flex-1">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (keyup.enter)="performSearch()"
+          placeholder="Buscar en el foro..." 
+          class="w-full bg-gray-700 text-white border-0 rounded-lg px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+        <span class="absolute left-3 top-3 text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
+      </div>
+      <button 
+        (click)="performSearch()" 
+        class="mt-2 sm:mt-0 sm:ml-2 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200"
+      >
+        Buscar
+      </button>
+    </div>
+    <p *ngIf="searchQuery" class="mt-2 text-gray-400">
+      Mostrando resultados para: <span class="font-medium text-blue-400">{{ searchQuery }}</span>
+    </p>
+  </div>
+
+  <!-- Filtros de búsqueda -->
+  <div class="bg-gray-800 rounded-lg p-4 mb-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between">
+      <h2 class="text-lg font-medium text-gray-200 mb-4 md:mb-0">Filtros</h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Filtro por categoría -->
+        <div>
+          <label for="category-filter" class="block text-sm font-medium text-gray-400 mb-1">Categoría</label>
+          <select 
+            id="category-filter"
+            [(ngModel)]="searchFilters.category"
+            class="w-full bg-gray-700 text-white border-0 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todas las categorías</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+          </select>
+        </div>
+        
+        <!-- Filtro por tipo -->
+        <div>
+          <label for="type-filter" class="block text-sm font-medium text-gray-400 mb-1">Tipo</label>
+          <select 
+            id="type-filter"
+            [(ngModel)]="searchFilters.type"
+            class="w-full bg-gray-700 text-white border-0 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">Todos los tipos</option>
+            <option value="topic">Temas</option>
+            <option value="comment">Comentarios</option>
+          </select>
+        </div>
+        
+        <!-- Ordenar por -->
+        <div>
+          <label for="sort-filter" class="block text-sm font-medium text-gray-400 mb-1">Ordenar por</label>
+          <select 
+            id="sort-filter"
+            [(ngModel)]="searchFilters.sortBy"
+            class="w-full bg-gray-700 text-white border-0 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="relevance">Relevancia</option>
+            <option value="date">Fecha (más reciente)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-end mt-4">
+      <button 
+        (click)="clearFilters()" 
+        class="text-gray-400 hover:text-gray-200 mr-4 transition"
+      >
+        Restablecer filtros
+      </button>
+      <button 
+        (click)="applyFilters()" 
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+      >
+        Aplicar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="isLoading" class="flex justify-center my-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+
+  <!-- Resultados de búsqueda -->
+  <div *ngIf="!isLoading && searchResults.length > 0">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-medium text-gray-200">{{ searchResults.length }} resultados encontrados</h2>
+    </div>
+    
+    <!-- Lista de resultados -->
+    <div class="space-y-4">
+      <div *ngFor="let result of searchResults" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition">
+        <div class="p-4">
+          <!-- Categoría y tipo -->
+          <div class="flex items-center mb-2">
+            <span class="px-2 py-1 text-xs rounded-md mr-2" 
+                  [ngClass]="{
+                    'bg-green-900 text-green-300': result.categoryId === 'gaming',
+                    'bg-blue-900 text-blue-300': result.categoryId === 'tech',
+                    'bg-red-900 text-red-300': result.categoryId === 'movies',
+                    'bg-yellow-900 text-yellow-300': result.categoryId === 'books',
+                    'bg-purple-900 text-purple-300': result.categoryId === 'sports'
+                  }">
+              {{ result.category }}
+            </span>
+            <span class="px-2 py-1 bg-gray-700 text-gray-300 text-xs rounded-md">
+              {{ result.type === 'topic' ? 'Tema' : 'Comentario' }}
+            </span>
+            <span class="ml-auto text-xs text-gray-400">
+              {{ result.date | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+          
+          <!-- Título con enlace -->
+          <a [routerLink]="[result.type === 'topic' ? '/thread' : '/thread', result.id]" class="block">
+            <h3 class="text-lg font-medium text-white hover:text-blue-400 transition">
+              {{ result.title }}
+            </h3>
+          </a>
+          
+          <!-- Extracto del contenido -->
+          <p class="mt-2 text-gray-400">{{ result.content }}</p>
+          
+          <!-- Autor y relevancia -->
+          <div class="mt-3 flex items-center justify-between">
+            <div class="flex items-center">
+              <span class="inline-block h-8 w-8 rounded-full bg-gray-700 mr-2 flex items-center justify-center text-xs font-medium text-gray-300">
+                {{ result.author.charAt(0).toUpperCase() }}
+              </span>
+              <span class="text-sm text-gray-300">{{ result.author }}</span>
+            </div>
+            
+            <div class="text-sm text-gray-500" *ngIf="searchFilters.sortBy === 'relevance'">
+              Relevancia: <span class="text-blue-400">{{ result.relevance }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Paginación -->
+    <div class="mt-8 flex justify-center">
+      <nav class="flex items-center" aria-label="Pagination">
+        <a href="javascript:void(0)" class="px-3 py-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">
+          <span class="sr-only">Anterior</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+        <a href="javascript:void(0)" class="px-3 py-1 mx-1 rounded-md text-white bg-blue-600">1</a>
+        <a href="javascript:void(0)" class="px-3 py-1 mx-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">2</a>
+        <a href="javascript:void(0)" class="px-3 py-1 mx-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">3</a>
+        <span class="px-3 py-1 mx-1 text-gray-500">...</span>
+        <a href="javascript:void(0)" class="px-3 py-1 mx-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">8</a>
+        <a href="javascript:void(0)" class="px-3 py-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">
+          <span class="sr-only">Siguiente</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Mensaje de no resultados -->
+  <div *ngIf="!isLoading && searchQuery && searchResults.length === 0" class="my-12 text-center py-8 bg-gray-800 rounded-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h3 class="mt-4 text-xl font-medium text-gray-300">No se encontraron resultados</h3>
+    <p class="mt-2 text-gray-500">
+      No hay coincidencias para "<span class="font-medium">{{ searchQuery }}</span>". <br>
+      Prueba con otros términos o ajusta los filtros.
+    </p>
+  </div>
+  
+  <!-- Mensaje de bienvenida -->
+  <div *ngIf="!isLoading && !searchQuery" class="my-12 text-center py-8 bg-gray-800 rounded-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    <h3 class="mt-4 text-xl font-medium text-gray-300">Busca en nuestro foro</h3>
+    <p class="mt-2 text-gray-500">
+      Encuentra temas, comentarios y usuarios escribiendo en el cuadro de búsqueda.
+    </p>
+  </div>
+</div> 

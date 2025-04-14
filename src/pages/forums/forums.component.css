@@ -1,0 +1,12 @@
+/* Estilos para la página principal de foros */
+.category-grid {
+  transition: all 0.3s ease;
+}
+
+.category-icon {
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+  transform: scale(1.1);
+} 
