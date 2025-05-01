@@ -146,8 +146,26 @@
     </div>
     
     <!-- Main content -->
-    <main class="flex-1 overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">
+    <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
       <router-outlet></router-outlet>
     </main>
+
+    <!-- Indicador Flotante de Estado de BD -->
+    <div 
+      class="fixed bottom-4 right-4 px-3 py-1.5 rounded-full text-white text-xs shadow-lg flex items-center space-x-2 transition-colors duration-300 z-50 cursor-pointer" 
+      [ngClass]="getDbStatusColorClass()"
+      (click)="performDbCheck()" 
+      title="Estado conexión BD (Click para re-verificar)"
+      role="status"
+      aria-live="polite"
+    >
+      <!-- Icono (opcional) -->
+      <span *ngIf="dbStatus === 'CHECKING'" class="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></span>
+      <span *ngIf="dbStatus === 'UP'" class="h-3 w-3 bg-white rounded-full"></span>
+      <span *ngIf="dbStatus === 'DOWN' || dbStatus === 'ERROR'" class="h-3 w-3 bg-white rounded-full opacity-50"></span>
+      
+      <!-- Texto -->
+      <span>BD: {{ dbStatusText }}</span>
+    </div>
   </div>
 </div> 

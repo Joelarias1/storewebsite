@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService, AuthResponse } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,15 +14,17 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 export class LoginComponent {
   loginForm: FormGroup;
   showPassword: boolean = false;
+  loginError: string | null = null;
+  isLoading: boolean = false;
   
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      rememberMe: [false]
+      password: ['', [Validators.required]]
     });
   }
   
@@ -30,22 +33,36 @@ export class LoginComponent {
   }
   
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      console.log('Formulario enviado, redirigiendo al dashboard');
-      // Simulación de login exitoso - Siempre redirige al dashboard para pruebas
-      this.router.navigate(['/dashboard']);
-    } else {
-      // Marcar todos los campos como tocados para mostrar errores
+    this.loginError = null;
+    if (this.loginForm.invalid) {
       Object.keys(this.loginForm.controls).forEach(key => {
-        const control = this.loginForm.get(key);
-        control?.markAsTouched();
+        this.loginForm.get(key)?.markAsTouched();
       });
+      return;
     }
-  }
-  
-  // Método alternativo para forzar la navegación (por si hay problemas con el formulario)
-  goToDashboard(): void {
-    console.log('Acceso directo al dashboard');
-    this.router.navigate(['/dashboard']);
+
+    this.isLoading = true;
+
+    const credentials = {
+      email: this.loginForm.value.email,
+      password: this.loginForm.value.password
+    };
+
+    this.authService.login(credentials).subscribe({
+      next: (response: AuthResponse | null) => {
+        this.isLoading = false;
+        if (response && response.token) {
+          console.log('Login exitoso, redirigiendo...');
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.loginError = 'Usuario o contraseña incorrectos.';
+        }
+      },
+      error: (err: any) => { 
+        this.isLoading = false;
+        this.loginError = 'Ocurrió un error al intentar iniciar sesión. Inténtalo de nuevo.';
+        console.error('Error HTTP en LoginComponent:', err); 
+      }
+    });
   }
 } 

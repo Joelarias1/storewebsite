@@ -1,77 +1,82 @@
-# Requisitos del Sistema de Foros en Línea
+# Requisitos del Proyecto: Sistema de Foros en Línea
 
-## 1. Visión General
+## Parte I: Documentación y Entrega
 
-El objetivo es desarrollar la interfaz de usuario (Frontend) para un sistema de foros en línea utilizando el proyecto Angular existente como base. La aplicación permitirá a los usuarios registrarse, iniciar sesión, participar en discusiones dentro de categorías temáticas y modificar su perfil. También incluirá funcionalidades de administración para la gestión del contenido.
+*   **Entrega:** Se debe entregar en un archivo comprimido (.rar o .zip) que contenga:
+    *   Código fuente de la aplicación FrontEnd (Angular).
+    *   Código fuente de los Microservicios desarrollados (Spring Boot).
+    *   Script de la BD Oracle (`schema.sql`, `data.sql`).
+    *   Código fuente del arquetipo (si aplica).
 
-## 2. Características Generales
+## Requisitos Generales del Sistema
 
-*   **Plataforma Base:** El proyecto se desarrollará sobre la base del código Angular existente (`tabletop-treasures`), adaptando y ampliando su estructura.
-*   **Roles de Usuario:** La aplicación debe soportar al menos dos roles con diferentes privilegios:
-    *   **Usuario Registrado:** Puede ver categorías y temas, crear nuevos temas, publicar comentarios, buscar contenido y modificar su propio perfil.
-    *   **Administrador/Moderador:** Posee todos los permisos del Usuario Registrado, y adicionalmente puede gestionar publicaciones y comentarios (ej. banear/eliminar contenido que incumpla las normas).
-    *   Pueden existir múltiples usuarios con el mismo rol.
-*   **Diseño y UX:**
-    *   El diseño (colores, logo, nombre, imágenes) será definido por el equipo de desarrollo.
-    *   Se permite inspiración en sitios existentes, pero se fomentará la originalidad.
-    *   Se utilizarán las tecnologías de frontend ya presentes (Angular, TypeScript, Bootstrap, FontAwesome).
+*   **Temática:** Sistema de foros en línea.
+*   **Categorías:** Debe tener al menos 5 categorías diferentes de temas (a elección del desarrollador).
+*   **Roles:** La aplicación debe contar con al menos 2 roles/tipos de usuarios con privilegios diferentes (ej. Usuario, Administrador/Moderador). Puede haber más roles.
+*   **Diseño:**
+    *   Libre elección de colores, logos, nombre e imágenes.
+    *   Se puede guiar de páginas existentes manteniendo originalidad.
+    *   Se pueden usar herramientas de diseño (Photoshop, Gimp, Illustrator, web).
+*   **Pagos:** No implementar sistemas de pago reales. Si es necesario, simular con páginas de éxito.
 
-## 3. Páginas y Vistas Requeridas
+## Requisitos Específicos del FrontEnd (Angular)
 
-### 3.1. Páginas Estándar de Autenticación y Usuario
+*   **Tecnologías:**
+    *   Framework: Angular (versión actual).
+    *   HTML, CSS (versiones actuales).
+    *   **Nota:** Se menciona Bootstrap y JS/JQuery, pero el proyecto actual usa **TailwindCSS**. Se debe clarificar o asumir TailwindCSS como principal.
+*   **Adaptabilidad (Responsive Design):**
+    *   La interfaz debe adaptarse a mínimo 3 tamaños de pantalla diferentes.
+    *   Basado en un GRID de 12 columnas.
+*   **GIT:** Manejo y organización del trabajo grupal usando GIT.
+*   **Pantallas Obligatorias:**
+    *   Inicio de sesión.
+    *   Registro de usuarios.
+    *   Recuperar contraseña.
+    *   Modificación de perfil.
+*   **Pantallas Adicionales:** Generar páginas internas para las funcionalidades del sistema (ver foro, ver categoría, ver post, crear post, etc.).
+*   **Formularios y Validaciones:**
+    *   Todos los formularios deben tener validaciones correspondientes para cada campo.
+    *   **Validaciones de Contraseña:** Al menos 4 validaciones (ej. longitud mínima/máxima, caracteres especiales, números y letras).
+*   **Manipulación de Información:**
+    *   Usar variables de Angular (listas, arreglos, colecciones).
+    *   Comunicarse con los microservicios mediante APIs para obtener y guardar información.
+*   **Patrón de Diseño:** Utilizar un patrón de diseño acorde a los requerimientos.
+*   **Pruebas Unitarias:**
+    *   Integrar pruebas unitarias con Karma.
+    *   Configurar Karma y SonarQube.
+    *   Alcanzar al menos el 80% de cobertura de código.
+    *   Ejecución y comprobación de pruebas/cobertura con SonarQube de forma local (no en Docker).
 
-*   **Inicio de Sesión (`/login`):** Formulario para que los usuarios existentes accedan a sus cuentas.
-*   **Registro de Usuarios (`/register`):** Formulario para que nuevos usuarios creen una cuenta.
-*   **Recuperar Contraseña (`/forgot-password`):** Formulario y proceso para que los usuarios restablezcan su contraseña olvidada (simulado o funcional según alcance posterior).
-*   **Modificación de Perfil (`/profile/edit`):** Página donde los usuarios pueden actualizar su información personal (ej. nombre de usuario, avatar, contraseña).
+## Requisitos Específicos del BackEnd (Spring Boot)
 
-### 3.2. Páginas del Foro
+*   **Framework:** Spring Boot.
+*   **Base de Datos:**
+    *   Comunicarse mediante CRUD con una base de datos Oracle Cloud.
+*   **GIT:** Manejo y organización del trabajo utilizando GIT.
+*   **API:**
+    *   Devolver información mediante APIs en formato JSON.
+    *   Cumplir con todos los requisitos de usuario.
+*   **Arquetipo:** Construidos mediante el arquetipo diseñado (si aplica).
+*   **Microservicios:** Desarrollar los siguientes:
+    *   **Microservicio de Usuarios:**
+        *   Control de usuarios (Crear, Modificar, Eliminar).
+        *   Inicio de sesión.
+    *   **Microservicio del Foro:**
+        *   Búsqueda, visualización, publicación y comentar temas por parte de los usuarios.
+    *   **Microservicio de Gestión/Moderación:**
+        *   Gestión de publicaciones y comentarios por parte de un administrador (ej. banear temas/comentarios que incumplan normas).
+*   **Comunicación:** El frontend Angular debe comunicarse con *todos* los microservicios desarrollados.
 
-*   **Página Principal / Índice de Categorías (`/` o `/forums`):** Muestra la lista de las categorías principales del foro.
-*   **Vista de Categoría (`/category/:categoryId`):** Muestra la lista de temas/hilos dentro de una categoría específica.
-*   **Vista de Tema/Hilo (`/thread/:threadId`):** Muestra el contenido de un tema específico, incluyendo el post original y los comentarios/respuestas.
-*   **Formulario de Creación de Tema (`/category/:categoryId/new-thread`):** Formulario para que los usuarios creen un nuevo tema dentro de una categoría.
-*   **Página de Resultados de Búsqueda (`/search?q=...`):** Muestra los resultados de búsqueda de temas/comentarios.
+## Parte II: Presentación
 
-### 3.3. Páginas de Administración (Acceso Restringido)
-
-*   **Panel de Administración (Opcional, `/admin`):** Un lugar centralizado para las herramientas de moderación (alternativamente, las acciones de moderación pueden estar integradas directamente en las vistas del foro).
-
-## 4. Funcionalidades Específicas
-
-*   **Categorías:** Debe haber al menos 5 categorías de temas diferentes (los nombres y temas específicos quedan a elección del equipo).
-*   **Publicación:** Los usuarios registrados pueden crear nuevos temas y añadir comentarios a temas existentes.
-*   **Visualización:** Todos los usuarios (registrados o no, según se defina) pueden ver categorías y temas. La visualización de comentarios puede requerir inicio de sesión.
-*   **Búsqueda:** Funcionalidad para buscar temas o comentarios por palabras clave.
-*   **Gestión de Contenido (Admin):** Los administradores/moderadores pueden banear (ocultar/marcar) o eliminar temas/comentarios que violen las normas del foro.
-
-## 5. Seguridad y Validaciones
-
-*   **Validaciones de Contraseña (Registro y Modificación de Perfil):**
-    *   Longitud mínima (ej. 8 caracteres).
-    *   Uso de caracteres especiales (ej. al menos uno: `!@#$%^&*()`).
-    *   Uso de números (ej. al menos un dígito).
-    *   Uso de letras mayúsculas y minúsculas.
-    *   *Opcional:* Longitud máxima.
-*   **Validaciones de Formularios:** Todos los campos en los formularios (Registro, Login, Creación de Tema, Comentario, Perfil, etc.) deben tener validaciones apropiadas (ej. campos requeridos, formato de email, longitud de texto).
-
-## 6. Exclusiones
-
-*   **Sistemas de Pago:** No se implementarán sistemas de pago reales. Si alguna funcionalidad lo requiere hipotéticamente, se simulará con páginas estáticas indicando éxito/fallo.
-
-## 7. Arquitectura Frontend (Consideraciones)
-
-*   Aunque los microservicios backend no se implementan en esta fase, la estructura del frontend debe considerar la separación lógica de funcionalidades:
-    *   **Flujo de Usuario:** Búsqueda, visualización, publicación, comentarios.
-    *   **Flujo de Administración:** Gestión de publicaciones y comentarios.
-*   Se utilizará Angular con SSR, TypeScript, Bootstrap y FontAwesome.
-
-## 8. Próximos Pasos (Fase Frontend)
-
-1.  Crear/Adaptar la estructura de componentes y módulos en Angular.
-2.  Implementar el sistema de enrutamiento para las páginas requeridas.
-3.  Desarrollar los componentes de UI para cada página y formulario.
-4.  Implementar las validaciones de formularios y contraseña.
-5.  Simular la gestión de estado de autenticación y roles en el frontend (ej. mediante servicios y/o LocalStorage).
-6.  Utilizar datos simulados (mock data) para poblar las vistas del foro hasta que el backend esté disponible.
-7.  Aplicar estilos consistentes según el diseño definido. 
+*   **Herramienta:** Kaltura.
+*   **Video:** Máximo 10 minutos.
+*   **Contenido del Video:**
+    *   Mostrar funcionamiento y comunicación FrontEnd/BackEnd de manera local.
+    *   Mostrar características, diseño, funcionalidades.
+    *   Explicar patrones y arquetipos desarrollados.
+    *   Comprobar el porcentaje de cobertura solicitado (SonarQube).
+    *   Mostrar la ejecución de las pruebas unitarias en Angular.
+    *   Mostrar en tiempo real *todas* las funcionalidades requeridas cumpliendo los requisitos.
+*   **Entrega:** Adjuntar el video a la actividad. 
