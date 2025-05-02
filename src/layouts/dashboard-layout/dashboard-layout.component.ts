@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { HealthCheckService, DbConnectionStatus } from '../../services/health-check.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -16,9 +18,10 @@ export class DashboardLayoutComponent implements OnInit {
   // Propiedad para almacenar el estado de la BD
   dbStatus: DbConnectionStatus = 'CHECKING'; 
   dbStatusText: string = 'Verificando...';
+  isAdmin: boolean = false;
 
   // Inyectar el servicio
-  constructor(private healthCheckService: HealthCheckService) { }
+  constructor(private healthCheckService: HealthCheckService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     // Llamar al servicio al iniciar el componente
@@ -26,6 +29,14 @@ export class DashboardLayoutComponent implements OnInit {
     
     // Opcional: verificar periódicamente (ej. cada 30 segundos)
     // setInterval(() => this.performDbCheck(), 30000);
+
+    // Cerrar el menú en dispositivos móviles por defecto
+    if (window.innerWidth < 1024) {
+      this.isMenuOpen = false;
+    }
+    
+    // Verificar si el usuario es administrador
+    this.isAdmin = this.authService.isUserAdmin();
   }
 
   performDbCheck(): void {
@@ -72,6 +83,7 @@ export class DashboardLayoutComponent implements OnInit {
     // En una implementación real, aquí iría la lógica de cierre de sesión
     console.log('Cerrando sesión...');
     // Redirigir al login
-    window.location.href = '/login';
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 } 

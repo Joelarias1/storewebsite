@@ -22,29 +22,52 @@
         <a routerLink="/search" routerLinkActive="bg-gray-700" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
           Buscar
         </a>
-        <div class="relative ml-3">
-          <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500" id="user-menu-button">
-            <span class="sr-only">Abrir menú de usuario</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 hover:text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
-            </svg>
-          </button>
-        </div>
 
-        <!-- Botones de autenticación -->
-        <div class="ml-3 flex items-center space-x-2">
-          <a routerLink="/login" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
-            Iniciar sesión
-          </a>
-          <a routerLink="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-            Registrarse
-          </a>
-        </div>
+        <!-- Enlaces para usuarios autenticados -->
+        <ng-container *ngIf="isAuthenticated; else unauthenticatedLinks">
+          <!-- Enlaces para administradores -->
+          <ng-container *ngIf="isAdmin">
+            <a routerLink="/dashboard" routerLinkActive="bg-gray-700" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Dashboard
+            </a>
+            <a routerLink="/dashboard/user-management" routerLinkActive="bg-gray-700" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Gestión Usuarios
+            </a>
+          </ng-container>
+          
+          <!-- Menú de usuario -->
+          <div class="relative ml-3">
+            <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500" id="user-menu-button">
+              <span class="sr-only">Abrir menú de usuario</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 hover:text-white" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            
+            <!-- Opciones de usuario (agregar lógica para mostrar/ocultar) -->
+            <div class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu">
+              <a routerLink="/dashboard/profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">Mi Perfil</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white" (click)="logout()">Cerrar Sesión</a>
+            </div>
+          </div>
+        </ng-container>
+        
+        <!-- Enlaces para usuarios no autenticados -->
+        <ng-template #unauthenticatedLinks>
+          <div class="ml-3 flex items-center space-x-2">
+            <a routerLink="/login" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Iniciar sesión
+            </a>
+            <a routerLink="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+              Registrarse
+            </a>
+          </div>
+        </ng-template>
       </div>
 
       <!-- Botón móvil -->
       <div class="md:hidden flex items-center">
-        <button type="button" class="text-gray-400 hover:text-white focus:outline-none" aria-controls="mobile-menu" aria-expanded="false">
+        <button type="button" class="text-gray-400 hover:text-white focus:outline-none" (click)="toggleMobileMenu()" aria-controls="mobile-menu" aria-expanded="false">
           <span class="sr-only">Abrir menú principal</span>
           <!-- Ícono de menú -->
           <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,7 +84,22 @@
       <a routerLink="/" routerLinkActive="bg-gray-700" [routerLinkActiveOptions]="{exact: true}" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Inicio</a>
       <a routerLink="/forums" routerLinkActive="bg-gray-700" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Foros</a>
       <a routerLink="/search" routerLinkActive="bg-gray-700" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Buscar</a>
-      <div class="border-t border-gray-700 pt-2 mt-2">
+      
+      <!-- Enlaces móviles para usuarios autenticados -->
+      <ng-container *ngIf="isAuthenticated">
+        <a routerLink="/dashboard/profile" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Mi Perfil</a>
+        
+        <!-- Enlaces para administradores en móvil -->
+        <ng-container *ngIf="isAdmin">
+          <a routerLink="/dashboard" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+          <a routerLink="/dashboard/user-management" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Gestión Usuarios</a>
+        </ng-container>
+        
+        <a href="#" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium" (click)="logout()">Cerrar Sesión</a>
+      </ng-container>
+      
+      <!-- Enlaces móviles para usuarios no autenticados -->
+      <div *ngIf="!isAuthenticated" class="border-t border-gray-700 pt-2 mt-2">
         <a routerLink="/login" class="block text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-base font-medium">Iniciar sesión</a>
         <a routerLink="/register" class="block bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-base font-medium mt-1">Registrarse</a>
       </div>

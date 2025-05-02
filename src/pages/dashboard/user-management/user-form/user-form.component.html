@@ -1,0 +1,118 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h3 class="card-title mb-0">{{ isEditMode ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}</h3>
+    </div>
+    <div class="card-body">
+      <div *ngIf="isLoading" class="text-center p-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando información del usuario...</p>
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+        <!-- Nombre de usuario -->
+        <div class="mb-3">
+          <label for="username" class="form-label">Nombre de usuario</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="username" 
+            formControlName="username"
+            [class.is-invalid]="userForm.get('username')?.invalid && userForm.get('username')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched">
+            <div *ngIf="userForm.get('username')?.errors?.['required']">El nombre de usuario es requerido.</div>
+            <div *ngIf="userForm.get('username')?.errors?.['minlength']">El nombre de usuario debe tener al menos 3 caracteres.</div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input 
+            type="email" 
+            class="form-control" 
+            id="email" 
+            formControlName="email"
+            [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+            <div *ngIf="userForm.get('email')?.errors?.['required']">El email es requerido.</div>
+            <div *ngIf="userForm.get('email')?.errors?.['email']">Por favor ingresa un email válido.</div>
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+          <label for="password" class="form-label">
+            Contraseña {{ isEditMode ? '(dejar en blanco para mantener la actual)' : '' }}
+          </label>
+          <input 
+            type="password" 
+            class="form-control" 
+            id="password" 
+            formControlName="password"
+            [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+          >
+          <div class="invalid-feedback" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+            <div *ngIf="userForm.get('password')?.errors?.['required']">La contraseña es requerida.</div>
+            <div *ngIf="userForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</div>
+          </div>
+        </div>
+
+        <!-- Rol -->
+        <div class="mb-3">
+          <label for="role" class="form-label">Rol</label>
+          <select 
+            class="form-select" 
+            id="role" 
+            formControlName="role"
+            [class.is-invalid]="userForm.get('role')?.invalid && userForm.get('role')?.touched"
+          >
+            <option value="USER">Usuario</option>
+            <option value="ADMIN">Administrador</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="userForm.get('role')?.invalid && userForm.get('role')?.touched">
+            Por favor selecciona un rol.
+          </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3">
+          <label for="status" class="form-label">Estado</label>
+          <select 
+            class="form-select" 
+            id="status" 
+            formControlName="status"
+            [class.is-invalid]="userForm.get('status')?.invalid && userForm.get('status')?.touched"
+          >
+            <option value="ACTIVE">Activo</option>
+            <option value="INACTIVE">Inactivo</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="userForm.get('status')?.invalid && userForm.get('status')?.touched">
+            Por favor selecciona un estado.
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-4">
+          <a routerLink="/dashboard/user-management" class="btn btn-secondary">Cancelar</a>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="userForm.invalid || isSaving"
+          >
+            <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isEditMode ? 'Actualizar' : 'Crear' }} Usuario
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

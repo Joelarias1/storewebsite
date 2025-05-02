@@ -18,6 +18,14 @@ export interface AuthResponse {
   // Puedes añadir más campos como nombre de usuario, etc.
 }
 
+// Interfaz para el usuario almacenado localmente
+export interface StoredUser {
+  id: number;
+  email: string;
+  role?: string;
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,6 +34,7 @@ export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth'; // URL base para autenticación
   private tokenKey = 'authToken'; // Clave para guardar el token en localStorage
   private isBrowser: boolean;
+  private userKey = 'user'; // Clave para almacenar datos del usuario
 
   // BehaviorSubject para rastrear el estado de autenticación
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
@@ -48,17 +57,55 @@ export class AuthService {
   login(credentials: LoginCredentials): Observable<AuthResponse | null> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
+        // Depuración completa de la respuesta
+        console.log('Respuesta completa del servidor:', response);
+        console.log('Propiedades de la respuesta:', Object.keys(response));
+        
         // Si la respuesta es exitosa y contiene un token
         if (response && response.token) {
           this.storeToken(response.token);
-          this.isAuthenticatedSubject.next(true); // Emitir que está autenticado
-          // Aquí podrías guardar más datos del usuario si los devuelve el backend
+          
+          // Depurar cada campo
+          console.log('Token recibido:', response.token);
+          console.log('userId recibido:', response.userId);
+          console.log('role recibido:', response.role);
+          
+          // Forzar el rol a ADMIN para pruebas si no viene del backend
+          const role = response.role || 'ADMIN';
+          console.log('Rol a utilizar:', role);
+          
+          // Almacenar la información del usuario incluyendo el rol
+          const userData: StoredUser = {
+            id: Number(response.userId) || 0,
+            email: credentials.email,
+            role: role,
+            token: response.token
+          };
+          
+          console.log('Datos de usuario COMPLETOS a guardar:', userData);
+          console.log('Verificando role en userData:', userData.role);
+          
+          // Guardar en localStorage
+          if (this.isBrowser) {
+            localStorage.setItem(this.userKey, JSON.stringify(userData));
+            
+            // Verificar lo que se guardó realmente
+            const saved = localStorage.getItem(this.userKey);
+            console.log('Datos guardados en localStorage:', saved);
+            if (saved) {
+              const parsedUser = JSON.parse(saved);
+              console.log('Usuario parseado de localStorage:', parsedUser);
+              console.log('Rol guardado en localStorage:', parsedUser.role);
+            }
+          }
+          
+          this.isAuthenticatedSubject.next(true);
         }
       }),
       catchError(error => {
         console.error('Error en el login:', error);
-        this.isAuthenticatedSubject.next(false); // Emitir que no está autenticado
-        return of(null); // Devuelve null en caso de error
+        this.isAuthenticatedSubject.next(false);
+        return of(null);
       })
     );
   }
@@ -89,6 +136,7 @@ export class AuthService {
   logout(): void {
     if (this.isBrowser) {
       localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.userKey); // También eliminar los datos del usuario
       this.isAuthenticatedSubject.next(false);
       this.router.navigate(['/login']);
     }
@@ -120,7 +168,62 @@ export class AuthService {
     return this.isBrowser && !!this.getToken();
   }
 
-  // Podrías añadir métodos para obtener el rol del usuario, etc.,
-  // decodificando el token si es un JWT, o a partir de datos guardados.
+  /**
+   * Verifica si el usuario actual es administrador.
+   */
+  isUserAdmin(): boolean {
+    const currentUser = this.getCurrentUser();
+    console.log('Verificando si el usuario es admin:', currentUser);
+    
+    if (!currentUser) {
+      console.log('No hay usuario actual');
+      return false;
+    }
+    
+    // Para pruebas, forzar ADMIN si no hay rol especificado
+    if (!currentUser.role) {
+      console.log('No hay rol definido, asumiendo ADMIN para pruebas');
+      this.setUserRole('ADMIN');
+      return true;
+    }
+    
+    const isAdmin = currentUser.role === 'ADMIN';
+    console.log(`Usuario con rol ${currentUser.role}, ¿es ADMIN?:`, isAdmin);
+    return isAdmin;
+  }
 
+  /**
+   * Obtiene los datos del usuario actual desde localStorage.
+   */
+  getCurrentUser(): StoredUser | null {
+    try {
+      const userData = localStorage.getItem(this.userKey);
+      if (!userData) return null;
+      
+      const user = JSON.parse(userData) as StoredUser;
+      
+      // Para pruebas, asegurar que tenga un rol
+      if (!user.role) {
+        user.role = 'ADMIN';
+        localStorage.setItem(this.userKey, JSON.stringify(user));
+      }
+      
+      return user;
+    } catch (e) {
+      console.error('Error al leer datos del usuario:', e);
+      return null;
+    }
+  }
+  
+  /**
+   * Establece explícitamente el rol del usuario actual
+   */
+  setUserRole(role: string): void {
+    const user = this.getCurrentUser();
+    if (user) {
+      user.role = role;
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+      console.log('Rol de usuario actualizado a:', role);
+    }
+  }
 } 

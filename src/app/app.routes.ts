@@ -20,6 +20,14 @@ import { NewThreadComponent } from '../pages/new-thread/new-thread.component';
 import { ForumsComponent } from '../pages/forums/forums.component';
 import { ThreadViewComponent } from '../pages/thread-view/thread-view.component';
 
+// Importaciones para gestión de usuarios
+import { UserListComponent } from '../pages/dashboard/user-management/user-list/user-list.component';
+import { UserFormComponent } from '../pages/dashboard/user-management/user-form/user-form.component';
+
+// Guards
+import { authGuard } from '../guards/auth.guard';
+import { adminGuard } from '../guards/admin.guard';
+
 // Rutas
 export const routes: Routes = [
   // Rutas públicas
@@ -40,6 +48,7 @@ export const routes: Routes = [
   { 
     path: 'dashboard', 
     component: DashboardLayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', component: DashboardComponent },
       { path: 'categorias', component: CategoriesComponent },
@@ -47,6 +56,12 @@ export const routes: Routes = [
       // Rutas de perfil
       { path: 'profile', component: ProfileComponent },
       { path: 'profile/edit', loadComponent: () => import('../pages/dashboard/profile-edit/profile-edit.component').then(c => c.ProfileEditComponent) },
+      
+      // Gestión de usuarios (admin)
+      { path: 'user-management', component: UserListComponent, canActivate: [adminGuard] },
+      { path: 'user-management/create', component: UserFormComponent, canActivate: [adminGuard] },
+      { path: 'user-management/edit/:id', component: UserFormComponent, canActivate: [adminGuard] },
+      
       // Página 404 para el dashboard (captura cualquier ruta inexistente)
       { path: '**', component: NotFoundComponent }
     ]

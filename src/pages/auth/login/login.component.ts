@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { AuthService, AuthResponse } from '../../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   showPassword: boolean = false;
   loginError: string | null = null;
@@ -26,6 +26,14 @@ export class LoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
       rememberMe: [false]
+    });
+  }
+  
+  ngOnInit(): void {
+    // Prellenar los campos con un usuario administrador por defecto (para pruebas)
+    this.loginForm.patchValue({
+      email: 'admin@example.com',
+      password: 'admin123'
     });
   }
   
@@ -56,10 +64,19 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (response: AuthResponse | null) => {
-        console.log('Respuesta recibida del servicio:', response);
+        console.log('Respuesta completa recibida del servicio:', JSON.stringify(response));
         this.isLoading = false;
         if (response && response.token) {
-          console.log('Login exitoso, redirigiendo...');
+          console.log('Login exitoso, datos del usuario:', {
+            token: response.token,
+            userId: response.userId,
+            role: response.role
+          });
+          
+          // Verificar que el usuario se haya guardado correctamente
+          const user = this.authService.getCurrentUser();
+          console.log('Usuario recuperado después de login:', user);
+          
           this.router.navigate(['/dashboard']);
         } else {
           console.log('Login fallido (sin token o respuesta null).');

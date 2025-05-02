@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,7 +10,16 @@ import { RouterModule } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  isAdmin: boolean = false;
+
+  constructor(private authService: AuthService) {}
+
+  ngOnInit(): void {
+    // Verificar si el usuario actual es administrador
+    this.isAdmin = this.authService.isUserAdmin();
+  }
+
   // Datos simulados para el panel
   estadisticas = {
     totalUsuarios: 843,

@@ -1,0 +1,13 @@
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+.card-header {
+  border-bottom: 0;
+} 
