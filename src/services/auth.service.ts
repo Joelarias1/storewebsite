@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
@@ -24,12 +25,22 @@ export class AuthService {
 
   private apiUrl = 'http://localhost:8080/api/auth'; // URL base para autenticación
   private tokenKey = 'authToken'; // Clave para guardar el token en localStorage
+  private isBrowser: boolean;
 
   // BehaviorSubject para rastrear el estado de autenticación
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+    if (this.isBrowser) {
+      this.isAuthenticatedSubject.next(this.hasToken());
+    }
+  }
 
   /**
    * Intenta iniciar sesión llamando al backend.
@@ -53,33 +64,60 @@ export class AuthService {
   }
 
   /**
+   * Intenta registrar un nuevo usuario llamando al backend.
+   */
+  register(userData: any): Observable<any> { // Usar 'any' por ahora, ajustar con DTO si es necesario
+    // Asegurarse de enviar solo los datos que espera el backend (RegisterRequestDto)
+    const registerData = {
+      username: userData.username,
+      email: userData.email,
+      password: userData.password
+      // Añadir otros campos si el backend los espera
+    };
+    return this.http.post<any>(`${this.apiUrl}/register`, registerData).pipe(
+      catchError(error => {
+        console.error('Error en el registro:', error);
+        // Podríamos devolver el objeto de error para que el componente lo maneje
+        return of(error); 
+      })
+    );
+  }
+
+  /**
    * Cierra la sesión eliminando el token y redirigiendo al login.
    */
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    this.isAuthenticatedSubject.next(false);
-    this.router.navigate(['/login']);
+    if (this.isBrowser) {
+      localStorage.removeItem(this.tokenKey);
+      this.isAuthenticatedSubject.next(false);
+      this.router.navigate(['/login']);
+    }
   }
 
   /**
-   * Almacena el token en localStorage.
+   * Almacena el token en localStorage (solo si es navegador).
    */
   private storeToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
+    if (this.isBrowser) {
+      localStorage.setItem(this.tokenKey, token);
+    }
   }
 
   /**
-   * Obtiene el token almacenado.
+   * Obtiene el token almacenado (solo si es navegador).
    */
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    if (this.isBrowser) {
+      return localStorage.getItem(this.tokenKey);
+    }
+    return null; // Retorna null en el servidor
   }
 
   /**
-   * Verifica si existe un token almacenado.
+   * Verifica si existe un token almacenado (solo si es navegador).
    */
   private hasToken(): boolean {
-    return !!this.getToken();
+    return this.isBrowser && !!this.getToken();
   }
 
   // Podrías añadir métodos para obtener el rol del usuario, etc.,

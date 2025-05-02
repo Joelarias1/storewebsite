@@ -24,7 +24,8 @@ export class LoginComponent {
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
+      rememberMe: [false]
     });
   }
   
@@ -33,36 +34,49 @@ export class LoginComponent {
   }
   
   onSubmit(): void {
+    console.log('onSubmit iniciado.');
     this.loginError = null;
+    
     if (this.loginForm.invalid) {
+      console.log('Formulario inválido. Marcando campos...');
       Object.keys(this.loginForm.controls).forEach(key => {
         this.loginForm.get(key)?.markAsTouched();
       });
       return;
     }
-
+    
+    console.log('Formulario válido. Preparando para llamar al servicio...');
     this.isLoading = true;
 
     const credentials = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     };
+    console.log('Credenciales:', credentials);
 
     this.authService.login(credentials).subscribe({
       next: (response: AuthResponse | null) => {
+        console.log('Respuesta recibida del servicio:', response);
         this.isLoading = false;
         if (response && response.token) {
           console.log('Login exitoso, redirigiendo...');
           this.router.navigate(['/dashboard']);
         } else {
+          console.log('Login fallido (sin token o respuesta null).');
           this.loginError = 'Usuario o contraseña incorrectos.';
         }
       },
-      error: (err: any) => { 
+      error: (err: any) => {
+        console.error('Error en la suscripción de login:', err);
         this.isLoading = false;
         this.loginError = 'Ocurrió un error al intentar iniciar sesión. Inténtalo de nuevo.';
-        console.error('Error HTTP en LoginComponent:', err); 
       }
     });
+    console.log('Llamada a authService.login realizada.');
+  }
+
+  // Método de prueba para verificar si el clic se detecta
+  testButtonClick(): void {
+    console.log('¡Clic en el botón detectado!');
   }
 } 

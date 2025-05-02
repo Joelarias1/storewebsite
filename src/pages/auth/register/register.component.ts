@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 declare var bootstrap: any;
 
 @Component({
@@ -15,30 +16,27 @@ export class RegisterComponent {
   registerForm: FormGroup;
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.registerForm = this.fb.group({
-      fullName: ['', Validators.required],
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      birthdate: ['', [Validators.required, this.ageValidator()]],
       password: ['', [
         Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(18),
         this.passwordValidator()
       ]],
       confirmPassword: ['', Validators.required],
-      address: ['']
+      terms: [false, Validators.requiredTrue]
     }, {
       validators: this.passwordMatchValidator
     });
   }
 
-  // Validador de edad mínima
   private ageValidator() {
     return (control: AbstractControl) => {
       const value = control.value;
@@ -95,29 +93,48 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      console.log('Form submitted:', this.registerForm.value);
-      this.showSuccessToast('Account created successfully!');
-      
-      // Esperamos 3 segundos para que se muestre el toast antes de navegar
-      setTimeout(() => {
-        console.log('Navigating to test page with data:', {
-          fullName: this.registerForm.get('fullName')?.value,
-          username: this.registerForm.get('username')?.value,
-          email: this.registerForm.get('email')?.value
-        });
-
-        this.router.navigate(['/test-page'], {
-          state: {
-            fullName: this.registerForm.get('fullName')?.value,
-            username: this.registerForm.get('username')?.value,
-            email: this.registerForm.get('email')?.value
-          }
-        });
-      }, 3000); // 3 segundos para coincidir con el delay del toast
-    } else {
+    if (this.registerForm.invalid) {
+      console.log('Formulario de registro inválido');
       this.showValidationErrors();
+      return;
     }
+
+    this.isLoading = true;
+
+    const userData = {
+      username: this.registerForm.value.username,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password
+    };
+
+    console.log('Enviando datos de registro:', userData);
+
+    this.authService.register(userData).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Respuesta del registro:', response);
+
+        if (response && response.message) {
+          this.showSuccessToast('¡Usuario registrado exitosamente!');
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else {
+          let errorMessage = 'Ocurrió un error durante el registro.';
+          if (response && response.error && response.error.error) {
+            errorMessage = response.error.error;
+          } else if (response && response.error && typeof response.error === 'string'){
+            errorMessage = response.error;
+          }
+          this.showErrorToast(errorMessage);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error inesperado en suscripción de registro:', err);
+        this.showErrorToast('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
+      }
+    });
   }
 
   private showValidationErrors() {
@@ -128,9 +145,6 @@ export class RegisterComponent {
       const control = controls[key];
       if (control.errors) {
         switch(key) {
-          case 'fullName':
-            errorMessages.push('Please enter your full name');
-            break;
           case 'username':
             errorMessages.push('Please enter a username');
             break;
@@ -141,18 +155,9 @@ export class RegisterComponent {
               errorMessages.push('Please enter a valid email');
             }
             break;
-          case 'birthdate':
-            if (control.errors['required']) {
-              errorMessages.push('Please enter your birth date');
-            } else if (control.errors['underage']) {
-              errorMessages.push('You must be at least 13 years old to register');
-            }
-            break;
           case 'password':
             if (control.errors['required']) {
               errorMessages.push('Please enter a password');
-            } else if (control.errors['minlength'] || control.errors['maxlength']) {
-              errorMessages.push('Password must be between 6 and 18 characters');
             } else if (control.errors['passwordRequirements']) {
               const reqs = control.errors['passwordRequirements'];
               if (!reqs.upperCase) errorMessages.push('Password must contain at least one uppercase letter');
@@ -186,7 +191,7 @@ export class RegisterComponent {
     if (toastElement && messageElement) {
       messageElement.textContent = message;
       const toast = new bootstrap.Toast(toastElement, {
-        delay: 3000 // 3 segundos
+        delay: 3000
       });
       toast.show();
     }
@@ -198,14 +203,13 @@ export class RegisterComponent {
     if (toastElement && messageElement) {
       messageElement.innerHTML = message.replace(/\n/g, '<br>');
       
-      // Calculamos el delay basado en la cantidad de errores
       const lineCount = message.split('\n').length;
-      const baseDelay = 3000; // 3 segundos base
-      const delayPerLine = 500; // 0.5 segundos adicionales por línea
+      const baseDelay = 3000;
+      const delayPerLine = 500;
       const totalDelay = baseDelay + (lineCount * delayPerLine);
 
       const toast = new bootstrap.Toast(toastElement, {
-        delay: totalDelay, // Tiempo dinámico basado en la cantidad de errores
+        delay: totalDelay,
         animation: true
       });
       toast.show();
