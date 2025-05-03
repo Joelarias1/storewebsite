@@ -16,7 +16,6 @@ import { ProfileComponent } from '../pages/dashboard/profile/profile.component';
 
 // Nuevos componentes
 import { SearchComponent } from '../pages/search/search.component';
-import { NewThreadComponent } from '../pages/new-thread/new-thread.component';
 import { ForumsComponent } from '../pages/forums/forums.component';
 import { ThreadViewComponent } from '../pages/thread-view/thread-view.component';
 
@@ -28,6 +27,11 @@ import { UserFormComponent } from '../pages/dashboard/user-management/user-form/
 import { authGuard } from '../guards/auth.guard';
 import { adminGuard } from '../guards/admin.guard';
 
+// Importar componentes del foro
+import { ForumHomeComponent } from '../pages/forum-home/forum-home.component';
+import { ForumCategoryComponent } from '../pages/forum-category/forum-category.component';
+import { NewThreadComponent } from '../pages/new-thread/new-thread.component';
+
 // Rutas
 export const routes: Routes = [
   // Rutas públicas
@@ -38,11 +42,13 @@ export const routes: Routes = [
   
   // Rutas del foro
   { path: 'search', component: SearchComponent },
-  { path: 'forums', component: ForumsComponent },
-  { path: 'category/:categoryId', loadComponent: () => import('../pages/dashboard/category-view/category-view.component').then(c => c.CategoryViewComponent) },
-  { path: 'category/:categoryId/new-thread', component: NewThreadComponent },
-  { path: 'new-thread', component: NewThreadComponent },
+  { path: 'forums', component: ForumHomeComponent },
+  { path: 'category/:categoryId', component: ForumCategoryComponent },
+  { path: 'new-thread', component: NewThreadComponent, canActivate: [authGuard] },
+  { path: 'new-thread/:categoryId', component: NewThreadComponent, canActivate: [authGuard] },
   { path: 'thread/:threadId', component: ThreadViewComponent },
+  { path: 'edit-thread/:threadId', component: NewThreadComponent, canActivate: [authGuard] },
+  { path: 'my-topics', component: ForumCategoryComponent, canActivate: [authGuard] },
   
   // Rutas del panel de administración (con layout de dashboard)
   { 

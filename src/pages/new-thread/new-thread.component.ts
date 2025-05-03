@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-
-interface Category {
-  id: string;
-  name: string;
-}
+import { ForumService } from '../../services/forum.service';
+import { AuthService } from '../../services/auth.service';
+import { Category } from '../../app/models/category.interface';
+import { Post } from '../../app/models/post.interface';
 
 @Component({
   selector: 'app-new-thread',
@@ -23,7 +22,8 @@ export class NewThreadComponent implements OnInit {
   threadData = {
     title: '',
     content: '',
-    categoryId: '',
+    categoryId: 0,
+    userId: 0,
     tags: [] as string[]
   };
   
@@ -33,29 +33,57 @@ export class NewThreadComponent implements OnInit {
   // Estado del formulario
   isSubmitting: boolean = false;
   formErrors: {[key: string]: string} = {};
+  errorMessage: string = '';
   
   // Categorías disponibles
-  categories: Category[] = [
-    { id: 'gaming', name: 'Gaming' },
-    { id: 'tech', name: 'Tecnología' },
-    { id: 'movies', name: 'Cine y Series' },
-    { id: 'books', name: 'Literatura' },
-    { id: 'sports', name: 'Deportes' }
-  ];
+  categories: Category[] = [];
+  loading: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private forumService: ForumService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    // Cargar las categorías desde el backend
+    this.loadCategories();
+    
+    // Obtener el usuario actual
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.threadData.userId = currentUser.id;
+    } else {
+      // Si no hay usuario logueado, redirigir al login
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      return;
+    }
+
     // Obtener el ID de la categoría de los parámetros de ruta
     this.route.params.subscribe(params => {
       if (params['categoryId']) {
         this.categoryId = params['categoryId'];
-        this.threadData.categoryId = this.categoryId;
+        this.threadData.categoryId = Number(this.categoryId);
       }
     });
+  }
+
+  // Cargar categorías desde el backend
+  loadCategories(): void {
+    this.loading = true;
+    this.forumService.getCategories()
+      .subscribe({
+        next: (categories) => {
+          this.categories = categories;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error al cargar categorías:', error);
+          this.loading = false;
+          this.errorMessage = 'No se pudieron cargar las categorías. Por favor, intenta más tarde.';
+        }
+      });
   }
 
   // Agregar un tag
@@ -102,14 +130,29 @@ export class NewThreadComponent implements OnInit {
     }
     
     this.isSubmitting = true;
+    this.errorMessage = '';
     
-    // Simulación de envío al backend
-    setTimeout(() => {
-      this.isSubmitting = false;
-      
-      // Redirigir a la página del tema creado (simulado)
-      this.router.navigate(['/thread', 'new-topic-123']);
-    }, 1500);
+    // Crear objeto post para enviar al backend
+    const post: Post = {
+      title: this.threadData.title,
+      content: this.threadData.content,
+      userId: this.threadData.userId,
+      categoryId: this.threadData.categoryId
+    };
+    
+    this.forumService.createPost(post)
+      .subscribe({
+        next: (createdPost) => {
+          this.isSubmitting = false;
+          // Redirigir a la página del tema creado
+          this.router.navigate(['/thread', createdPost.id]);
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          console.error('Error al crear el post:', error);
+          this.errorMessage = error.message || 'Error al crear el post. Por favor, intenta más tarde.';
+        }
+      });
   }
 
   // Cancelar la creación
