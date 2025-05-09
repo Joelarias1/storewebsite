@@ -1,118 +1,218 @@
-<div class="container mt-4">
-  <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h3 class="card-title mb-0">{{ isEditMode ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}</h3>
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6 flex items-center">
+    <a routerLink="/dashboard/user-management" class="flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Volver a la lista
+    </a>
+  </div>
+
+  <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+    <!-- Cabecera del formulario -->
+    <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white">{{ isEditMode ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}</h1>
     </div>
-    <div class="card-body">
-      <div *ngIf="isLoading" class="text-center p-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Cargando...</span>
-        </div>
-        <p class="mt-2">Cargando información del usuario...</p>
+
+    <!-- Mensajes de feedback -->
+    <div *ngIf="successMessage" class="mx-6 mt-6 bg-green-600/20 border border-green-500 text-green-400 p-4 rounded-lg shadow">
+      <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <p>{{ successMessage }}</p>
       </div>
-
-      <div *ngIf="error" class="alert alert-danger" role="alert">
-        {{ error }}
-      </div>
-
-      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
-        <!-- Nombre de usuario -->
-        <div class="mb-3">
-          <label for="username" class="form-label">Nombre de usuario</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="username" 
-            formControlName="username"
-            [class.is-invalid]="userForm.get('username')?.invalid && userForm.get('username')?.touched"
-          >
-          <div class="invalid-feedback" *ngIf="userForm.get('username')?.invalid && userForm.get('username')?.touched">
-            <div *ngIf="userForm.get('username')?.errors?.['required']">El nombre de usuario es requerido.</div>
-            <div *ngIf="userForm.get('username')?.errors?.['minlength']">El nombre de usuario debe tener al menos 3 caracteres.</div>
-          </div>
-        </div>
-
-        <!-- Email -->
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
-          <input 
-            type="email" 
-            class="form-control" 
-            id="email" 
-            formControlName="email"
-            [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
-          >
-          <div class="invalid-feedback" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-            <div *ngIf="userForm.get('email')?.errors?.['required']">El email es requerido.</div>
-            <div *ngIf="userForm.get('email')?.errors?.['email']">Por favor ingresa un email válido.</div>
-          </div>
-        </div>
-
-        <!-- Contraseña -->
-        <div class="mb-3">
-          <label for="password" class="form-label">
-            Contraseña {{ isEditMode ? '(dejar en blanco para mantener la actual)' : '' }}
-          </label>
-          <input 
-            type="password" 
-            class="form-control" 
-            id="password" 
-            formControlName="password"
-            [class.is-invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
-          >
-          <div class="invalid-feedback" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
-            <div *ngIf="userForm.get('password')?.errors?.['required']">La contraseña es requerida.</div>
-            <div *ngIf="userForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</div>
-          </div>
-        </div>
-
-        <!-- Rol -->
-        <div class="mb-3">
-          <label for="role" class="form-label">Rol</label>
-          <select 
-            class="form-select" 
-            id="role" 
-            formControlName="role"
-            [class.is-invalid]="userForm.get('role')?.invalid && userForm.get('role')?.touched"
-          >
-            <option value="USER">Usuario</option>
-            <option value="ADMIN">Administrador</option>
-          </select>
-          <div class="invalid-feedback" *ngIf="userForm.get('role')?.invalid && userForm.get('role')?.touched">
-            Por favor selecciona un rol.
-          </div>
-        </div>
-
-        <!-- Estado -->
-        <div class="mb-3">
-          <label for="status" class="form-label">Estado</label>
-          <select 
-            class="form-select" 
-            id="status" 
-            formControlName="status"
-            [class.is-invalid]="userForm.get('status')?.invalid && userForm.get('status')?.touched"
-          >
-            <option value="ACTIVE">Activo</option>
-            <option value="INACTIVE">Inactivo</option>
-          </select>
-          <div class="invalid-feedback" *ngIf="userForm.get('status')?.invalid && userForm.get('status')?.touched">
-            Por favor selecciona un estado.
-          </div>
-        </div>
-
-        <!-- Botones -->
-        <div class="d-flex justify-content-between mt-4">
-          <a routerLink="/dashboard/user-management" class="btn btn-secondary">Cancelar</a>
-          <button 
-            type="submit" 
-            class="btn btn-primary" 
-            [disabled]="userForm.invalid || isSaving"
-          >
-            <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            {{ isEditMode ? 'Actualizar' : 'Crear' }} Usuario
-          </button>
-        </div>
-      </form>
     </div>
+
+    <div *ngIf="error" class="mx-6 mt-6 bg-red-600/20 border border-red-500 text-red-400 p-4 rounded-lg shadow">
+      <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p>{{ error }}</p>
+      </div>
+    </div>
+    
+    <!-- Mensajes de depuración (solo visibles en modo desarrollo) -->
+    <div *ngIf="isDebugMode()" class="mx-6 mt-6 bg-gray-700 border border-gray-600 text-gray-300 p-4 rounded-lg shadow">
+      <div class="flex items-center mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="font-medium">Información de depuración</p>
+      </div>
+      
+      <div class="text-sm space-y-1 mt-2">
+        <p>Usuario autenticado: <span [ngClass]="authStatus ? 'text-green-400' : 'text-red-400'">{{ authStatus ? 'Sí' : 'No' }}</span></p>
+        <p>Token disponible: <span [ngClass]="tokenAvailable ? 'text-green-400' : 'text-red-400'">{{ tokenAvailable ? 'Sí' : 'No' }}</span></p>
+        <p>Modo de edición: <span class="text-blue-400">{{ isEditMode ? 'Activo (ID: ' + userId + ')' : 'Inactivo (creación)' }}</span></p>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="p-6 text-center">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+      <p class="text-gray-300">Cargando información del usuario...</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading" class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Avatar -->
+        <div class="md:col-span-2 flex flex-col items-center mb-6">
+          <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-700 shadow-lg mb-4">
+            <img *ngIf="userForm.get('avatar')?.value; else placeholderAvatar" [src]="userForm.get('avatar')?.value" alt="Avatar" class="w-full h-full object-cover">
+            <ng-template #placeholderAvatar>
+              <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            </ng-template>
+          </div>
+          
+          <div class="w-full max-w-md">
+            <label for="avatar" class="block text-sm font-medium text-gray-400 mb-1">URL del Avatar</label>
+            <input 
+              type="url" 
+              id="avatar" 
+              formControlName="avatar" 
+              placeholder="https://ejemplo.com/avatar.jpg"
+              class="bg-gray-700 text-white w-full p-2 rounded-md border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+            <p class="text-xs text-gray-500 mt-1">Ingresa la URL de una imagen para usar como avatar (opcional).</p>
+          </div>
+        </div>
+        
+        <!-- Columna 1 -->
+        <div>
+          <!-- Nombre completo -->
+          <div class="mb-4">
+            <label for="fullName" class="block text-sm font-medium text-gray-400 mb-1">
+              Nombre Completo {{ !isEditMode ? '*' : '' }}
+            </label>
+            <input 
+              type="text" 
+              id="fullName" 
+              formControlName="fullName" 
+              class="bg-gray-700 text-white w-full p-2 rounded-md border"
+              [ngClass]="isFieldInvalid('fullName') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-600 focus:border-blue-500 focus:ring-blue-500'"
+              placeholder="Nombre completo"
+            >
+            <p *ngIf="isFieldInvalid('fullName')" class="mt-1 text-sm text-red-500">
+              {{ getErrorMessage('fullName') }}
+            </p>
+          </div>
+          
+          <!-- Nombre de usuario -->
+          <div class="mb-4">
+            <label for="username" class="block text-sm font-medium text-gray-400 mb-1">Nombre de Usuario *</label>
+            <input 
+              type="text" 
+              id="username" 
+              formControlName="username" 
+              class="bg-gray-700 text-white w-full p-2 rounded-md border"
+              [ngClass]="isFieldInvalid('username') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-600 focus:border-blue-500 focus:ring-blue-500'"
+              placeholder="Nombre de usuario"
+            >
+            <p *ngIf="isFieldInvalid('username')" class="mt-1 text-sm text-red-500">
+              {{ getErrorMessage('username') }}
+            </p>
+          </div>
+          
+          <!-- Email -->
+          <div class="mb-4">
+            <label for="email" class="block text-sm font-medium text-gray-400 mb-1">Email *</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              class="bg-gray-700 text-white w-full p-2 rounded-md border"
+              [ngClass]="isFieldInvalid('email') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-600 focus:border-blue-500 focus:ring-blue-500'"
+              placeholder="correo@ejemplo.com"
+            >
+            <p *ngIf="isFieldInvalid('email')" class="mt-1 text-sm text-red-500">
+              {{ getErrorMessage('email') }}
+            </p>
+          </div>
+        </div>
+        
+        <!-- Columna 2 -->
+        <div>
+          <!-- Contraseña -->
+          <div class="mb-4">
+            <label for="password" class="block text-sm font-medium text-gray-400 mb-1">
+              Contraseña {{ isEditMode ? '(dejar en blanco para mantener la actual)' : '*' }}
+            </label>
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password" 
+              class="bg-gray-700 text-white w-full p-2 rounded-md border"
+              [ngClass]="isFieldInvalid('password') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-600 focus:border-blue-500 focus:ring-blue-500'"
+              placeholder="••••••••"
+            >
+            <p *ngIf="isFieldInvalid('password')" class="mt-1 text-sm text-red-500">
+              {{ getErrorMessage('password') }}
+            </p>
+          </div>
+          
+          <!-- Rol -->
+          <div class="mb-4">
+            <label for="role" class="block text-sm font-medium text-gray-400 mb-1">Rol *</label>
+            <select 
+              id="role" 
+              formControlName="role" 
+              class="bg-gray-700 text-white w-full p-2 rounded-md border"
+              [ngClass]="isFieldInvalid('role') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-600 focus:border-blue-500 focus:ring-blue-500'"
+            >
+              <option value="USER">Usuario</option>
+              <option value="MODERATOR">Moderador</option>
+              <option value="ADMIN">Administrador</option>
+            </select>
+            <p *ngIf="isFieldInvalid('role')" class="mt-1 text-sm text-red-500">
+              {{ getErrorMessage('role') }}
+            </p>
+          </div>
+          
+          <!-- Estado -->
+          <div class="mb-4">
+            <label for="status" class="block text-sm font-medium text-gray-400 mb-1">Estado *</label>
+            <select 
+              id="status" 
+              formControlName="status" 
+              class="bg-gray-700 text-white w-full p-2 rounded-md border"
+              [ngClass]="isFieldInvalid('status') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-600 focus:border-blue-500 focus:ring-blue-500'"
+            >
+              <option value="ACTIVE">Activo</option>
+              <option value="INACTIVE">Inactivo</option>
+            </select>
+            <p *ngIf="isFieldInvalid('status')" class="mt-1 text-sm text-red-500">
+              {{ getErrorMessage('status') }}
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botones -->
+      <div class="flex justify-end mt-6 space-x-3">
+        <a 
+          routerLink="/dashboard/user-management" 
+          class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md transition"
+        >
+          Cancelar
+        </a>
+        <button 
+          type="submit" 
+          class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition flex items-center"
+          [disabled]="userForm.invalid || isSaving"
+          [ngClass]="{'opacity-50 cursor-not-allowed': userForm.invalid || isSaving}"
+        >
+          <div *ngIf="isSaving" class="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+          {{ isEditMode ? 'Actualizar' : 'Crear' }} Usuario
+        </button>
+      </div>
+    </form>
   </div>
 </div> 

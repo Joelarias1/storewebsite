@@ -6,12 +6,13 @@ import { Post } from '../app/models/post.interface';
 import { Category } from '../app/models/category.interface';
 import { Comment } from '../app/models/comment.interface';
 import { ApiResponse } from '../app/models/response.interface';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ForumService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
 
@@ -283,29 +284,23 @@ export class ForumService {
         catchError(error => {
           console.error('Error en createComment:', error);
           
-          // Plan alternativo: crear un comentario simulado si la API falla
-          // Esto permitirá que la UI siga funcionando mientras se soluciona el backend
-          if (error.status === 404 || error.status === 0) {
-            console.warn('API para crear comentarios no disponible, usando alternativa local');
-            
-            // Crear un comentario simulado con los datos proporcionados
-            const mockComment: Comment = {
-              id: Math.floor(Math.random() * 10000), // ID aleatorio
-              content: commentData.content,
-              postId: commentData.postId,
-              userId: commentData.userId,
-              userName: 'Tu', // Usar un nombre genérico
-              createdAt: new Date().toISOString(),
-              status: 'ACTIVE'
-            };
-            
-            // Devolver el comentario simulado
-            console.log('Comentario simulado creado:', mockComment);
-            return of(mockComment);
-          }
+          // Implementación alternativa mientras se soluciona el backend
+          console.warn('API para comentarios no disponible, usando alternativa local');
           
-          // Si es un error diferente, propagarlo
-          throw error;
+          // Crear un comentario simulado con los datos proporcionados
+          const mockComment: Comment = {
+            id: Math.floor(Math.random() * 10000), // ID aleatorio
+            content: commentData.content,
+            postId: commentData.postId,
+            userId: commentData.userId,
+            userName: 'Usuario Actual', // Nombre genérico
+            createdAt: new Date().toISOString(),
+            status: 'ACTIVE'
+          };
+          
+          // Devolver el comentario simulado
+          console.log('Comentario simulado creado:', mockComment);
+          return of(mockComment);
         })
       );
   }

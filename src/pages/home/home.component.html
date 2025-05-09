@@ -14,169 +14,174 @@
   <!-- Contenido principal -->
   <div class="container mx-auto px-4 py-8">
     
-    <!-- Sección de bienvenida y estadísticas -->
-    <div class="flex flex-col md:flex-row gap-6 mb-10">
-      <div class="md:w-2/3">
-        <div class="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700">
-          <h2 class="text-xl font-semibold text-gray-100 mb-4">Bienvenido a la comunidad</h2>
-          <p class="text-gray-300 mb-4">
-            ForoDev es un espacio dedicado a desarrolladores y entusiastas de la tecnología para compartir conocimientos, resolver dudas y conectar con otros profesionales.
-          </p>
-          <div class="flex space-x-4 mt-6">
-            <a href="#" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
-              </svg>
-              Explorar categorías
-            </a>
-            <a href="#" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium border border-gray-600 hover:bg-gray-700 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-              </svg>
-              Crear tema
-            </a>
+    <!-- Sección de acciones superior -->
+    <div class="flex justify-between items-center mb-6">
+      <div class="flex space-x-4">
+        <a routerLink="/new-thread" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors">
+          <i class="fa fa-plus mr-2"></i>
+          Crear tema
+        </a>
+        
+        <div class="inline-flex rounded-md shadow-sm">
+          <button 
+            (click)="changeSorting('createdAt')" 
+            class="inline-flex items-center rounded-l-md px-4 py-2 text-sm font-medium border" 
+            [ngClass]="sortBy === 'createdAt' ? 'bg-blue-600 text-white border-blue-700' : 'bg-gray-700 text-gray-200 border-gray-600 hover:bg-gray-600'">
+            <i class="fa fa-clock-o mr-2"></i>
+            Recientes
+          </button>
+          <button 
+            (click)="changeSorting('title')" 
+            class="inline-flex items-center px-4 py-2 text-sm font-medium border-t border-b" 
+            [ngClass]="sortBy === 'title' ? 'bg-blue-600 text-white border-blue-700' : 'bg-gray-700 text-gray-200 border-gray-600 hover:bg-gray-600'">
+            <i class="fa fa-sort-alpha-asc mr-2"></i>
+            Título
+          </button>
+          <button 
+            (click)="changeSorting('commentCount')" 
+            class="inline-flex items-center rounded-r-md px-4 py-2 text-sm font-medium border" 
+            [ngClass]="sortBy === 'commentCount' ? 'bg-blue-600 text-white border-blue-700' : 'bg-gray-700 text-gray-200 border-gray-600 hover:bg-gray-600'">
+            <i class="fa fa-comments mr-2"></i>
+            Popularidad
+          </button>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-2">
+        <a routerLink="/search" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium border border-gray-600 hover:bg-gray-700 transition-colors">
+          <i class="fa fa-search mr-2"></i>
+          Buscar
+        </a>
+      </div>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="mb-6 p-4 bg-red-900/50 border border-red-800 rounded-lg text-red-200">
+      <p>{{ error }}</p>
+    </div>
+    
+    <!-- Visualización de posts (estilo Reddit) -->
+    <div class="space-y-4 mb-8">
+      <!-- Spinner de carga -->
+      <div *ngIf="loading && posts.length === 0" class="flex justify-center p-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+      
+      <!-- No hay posts -->
+      <div *ngIf="!loading && posts.length === 0 && !error" class="bg-gray-800 rounded-lg p-8 text-center">
+        <i class="fa fa-exclamation-circle text-4xl text-gray-500 mb-4"></i>
+        <h3 class="text-xl font-medium text-gray-300 mb-2">No hay publicaciones disponibles</h3>
+        <p class="text-gray-400">Sé el primero en compartir algo interesante con la comunidad</p>
+        <a routerLink="/new-thread" class="mt-4 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors">
+          <i class="fa fa-plus mr-2"></i>
+          Crear tema
+        </a>
+      </div>
+      
+      <!-- Lista de posts -->
+      <div *ngFor="let post of posts" class="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden hover:border-gray-500 transition-colors">
+        <div class="flex">
+          <!-- Columna izquierda para votos (decorativo) -->
+          <div class="w-14 bg-gray-900/40 flex flex-col items-center py-4">
+            <button class="text-gray-400 hover:text-blue-400 transition-colors">
+              <i class="fa fa-arrow-up"></i>
+            </button>
+            <span class="my-2 font-medium">{{ post.commentCount || 0 }}</span>
+            <button class="text-gray-400 hover:text-red-400 transition-colors">
+              <i class="fa fa-arrow-down"></i>
+            </button>
+          </div>
+          
+          <!-- Contenido principal del post -->
+          <div class="flex-1 p-4">
+            <!-- Información de categoría y autor -->
+            <div class="flex items-center text-xs text-gray-400 mb-2">
+              <a [routerLink]="['/category', post.categoryId]" class="font-medium text-blue-400 hover:underline">
+                {{ post.category?.name || 'Categoría' }}
+              </a>
+              <span class="mx-1">•</span>
+              <span>Publicado por</span>
+              <a class="mx-1 font-medium text-blue-400 hover:underline">
+                {{ post.userName || 'usuario' }}
+              </a>
+              <span class="mx-1">•</span>
+              <span>{{ post.createdAt ? getTimeAgo(post.createdAt) : 'fecha desconocida' }}</span>
+            </div>
+            
+            <!-- Título del post -->
+            <h2 class="text-xl font-semibold mb-2">
+              <a [routerLink]="['/thread', post.id]" class="text-white hover:text-blue-300 transition-colors">
+                {{ post.title }}
+              </a>
+            </h2>
+            
+            <!-- Contenido (versión recortada) -->
+            <div class="text-gray-300 mb-3 overflow-hidden max-h-24">
+              <p>{{ post.content.length > 300 ? post.content.substring(0, 300) + '...' : post.content }}</p>
+            </div>
+            
+            <!-- Acciones del post -->
+            <div class="flex items-center text-sm text-gray-400">
+              <a [routerLink]="['/thread', post.id]" class="flex items-center mr-4 hover:text-blue-300 transition-colors">
+                <i class="fa fa-comment-o mr-1"></i>
+                {{ post.commentCount || 0 }} comentarios
+              </a>
+              <a class="flex items-center mr-4 hover:text-blue-300 transition-colors">
+                <i class="fa fa-share mr-1"></i>
+                Compartir
+              </a>
+              <a [routerLink]="['/thread', post.id]" class="flex items-center hover:text-blue-300 transition-colors">
+                <i class="fa fa-eye mr-1"></i>
+                Ver completo
+              </a>
+            </div>
           </div>
         </div>
       </div>
       
-      <div class="md:w-1/3">
-        <div class="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 h-full">
-          <h3 class="text-lg font-medium text-gray-100 mb-3">Estadísticas del foro</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-gray-700/50 p-3 rounded-lg">
-              <p class="text-sm text-gray-400">Temas</p>
-              <p class="text-2xl font-bold text-gray-100">2,305</p>
-            </div>
-            <div class="bg-gray-700/50 p-3 rounded-lg">
-              <p class="text-sm text-gray-400">Usuarios</p>
-              <p class="text-2xl font-bold text-gray-100">14.2K</p>
-            </div>
-            <div class="bg-gray-700/50 p-3 rounded-lg">
-              <p class="text-sm text-gray-400">Posts</p>
-              <p class="text-2xl font-bold text-gray-100">48.7K</p>
-            </div>
-            <div class="bg-gray-700/50 p-3 rounded-lg">
-              <p class="text-sm text-gray-400">Online</p>
-              <p class="text-2xl font-bold text-gray-100">329</p>
-            </div>
-          </div>
+      <!-- Cargando más posts -->
+      <div *ngIf="loading && posts.length > 0" class="flex justify-center p-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+      
+      <!-- Botón de cargar más -->
+      <div *ngIf="posts.length > 0 && !loading" class="flex justify-center">
+        <button 
+          (click)="loadMore()" 
+          class="px-6 py-3 border border-gray-700 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors text-gray-300">
+          Cargar más publicaciones
+        </button>
+      </div>
+    </div>
+    
+    <!-- Categorías (barra lateral simulada) -->
+    <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 mb-8">
+      <div class="bg-gray-800 p-4 border-b border-gray-700">
+        <h2 class="text-lg font-medium text-white">Categorías populares</h2>
+      </div>
+      
+      <div class="divide-y divide-gray-700">
+        <div *ngIf="categories.length === 0 && !error" class="p-4 text-center text-gray-400">
+          <p>Cargando categorías...</p>
         </div>
-      </div>
-    </div>
-    
-    <!-- Categorías destacadas -->
-    <div class="mb-10">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-semibold text-gray-100">Categorías del foro</h2>
-        <a routerLink="/dashboard/categorias" class="text-sm text-blue-400 hover:text-blue-300">Administrar categorías</a>
-      </div>
-      
-      <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700">
-        <ul class="divide-y divide-gray-700">
-          <li *ngFor="let category of categories" class="p-5 hover:bg-gray-700/50 transition-colors">
-            <div class="flex items-center gap-4">
-              <div class="h-12 w-12 rounded-lg flex items-center justify-center" [ngClass]="getColorClass(category.color)">
-                <i class="fa fa-{{ category.icon }} text-xl"></i>
-              </div>
-              <div class="flex-1">
-                <a [routerLink]="['/category', category.id]" class="text-lg font-medium text-white hover:text-blue-300 transition-colors">
-                  {{ category.name }}
-                </a>
-                <p class="text-gray-400 mt-1">{{ category.description }}</p>
-              </div>
-              <div class="text-right">
-                <div class="flex items-center gap-6">
-                  <div class="text-center">
-                    <span class="block text-lg font-semibold text-gray-200">{{ category.topics }}</span>
-                    <span class="text-xs text-gray-400">Temas</span>
-                  </div>
-                  <div class="text-center">
-                    <span class="block text-lg font-semibold text-gray-200">{{ category.posts }}</span>
-                    <span class="text-xs text-gray-400">Posts</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    
-    <!-- Temas recientes -->
-    <div>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-semibold text-gray-100">Temas recientes</h2>
-        <a href="#" class="text-sm text-blue-400 hover:text-blue-300">Ver todos</a>
+        
+        <a *ngFor="let category of categories" 
+           [routerLink]="['/category', category.id]" 
+           class="flex items-center p-4 hover:bg-gray-700/50 transition-colors">
+          <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center mr-3 text-white">
+            <i class="fa fa-folder"></i>
+          </div>
+          <div>
+            <h3 class="font-medium text-white">{{ category.name }}</h3>
+            <p class="text-xs text-gray-400">{{ category.description }}</p>
+          </div>
+        </a>
       </div>
       
-      <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700">
-        <ul class="divide-y divide-gray-700">
-          <li class="p-4 hover:bg-gray-700/50 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop" alt="Avatar de usuario" class="h-full w-full object-cover">
-              </div>
-              <div class="flex-1 min-w-0">
-                <a href="#" class="text-blue-400 hover:text-blue-300 text-base font-medium block truncate">¿Cuál es la mejor forma de aprender TypeScript en 2024?</a>
-                <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                  <span>Por &#64;davidTS</span>
-                  <span>•</span>
-                  <span>hace 2 horas</span>
-                  <span>•</span>
-                  <span>32 respuestas</span>
-                </div>
-              </div>
-              <div class="bg-gray-700 rounded px-3 py-1 text-center min-w-16">
-                <span class="block text-sm font-semibold text-gray-200">32</span>
-                <span class="text-xs text-gray-400">resp</span>
-              </div>
-            </div>
-          </li>
-          
-          <li class="p-4 hover:bg-gray-700/50 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&auto=format&fit=crop" alt="Avatar de usuario" class="h-full w-full object-cover">
-              </div>
-              <div class="flex-1 min-w-0">
-                <a href="#" class="text-blue-400 hover:text-blue-300 text-base font-medium block truncate">Comparativa de frameworks CSS en 2024: Tailwind vs Bootstrap vs Material UI</a>
-                <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                  <span>Por &#64;laura_dev</span>
-                  <span>•</span>
-                  <span>hace 5 horas</span>
-                  <span>•</span>
-                  <span>48 respuestas</span>
-                </div>
-              </div>
-              <div class="bg-gray-700 rounded px-3 py-1 text-center min-w-16">
-                <span class="block text-sm font-semibold text-gray-200">48</span>
-                <span class="text-xs text-gray-400">resp</span>
-              </div>
-            </div>
-          </li>
-          
-          <li class="p-4 hover:bg-gray-700/50 transition-colors">
-            <div class="flex items-start gap-3">
-              <div class="h-10 w-10 rounded-full overflow-hidden flex-shrink-0">
-                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=100&auto=format&fit=crop" alt="Avatar de usuario" class="h-full w-full object-cover">
-              </div>
-              <div class="flex-1 min-w-0">
-                <a href="#" class="text-blue-400 hover:text-blue-300 text-base font-medium block truncate">¿Cómo implementar autenticación JWT en Angular 18?</a>
-                <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                  <span>Por &#64;carlos_ng</span>
-                  <span>•</span>
-                  <span>hace 1 día</span>
-                  <span>•</span>
-                  <span>15 respuestas</span>
-                </div>
-              </div>
-              <div class="bg-gray-700 rounded px-3 py-1 text-center min-w-16">
-                <span class="block text-sm font-semibold text-gray-200">15</span>
-                <span class="text-xs text-gray-400">resp</span>
-              </div>
-            </div>
-          </li>
-        </ul>
+      <div class="p-4 bg-gray-800 border-t border-gray-700">
+        <a routerLink="/forums" class="text-blue-400 hover:underline text-sm">
+          Ver todas las categorías →
+        </a>
       </div>
     </div>
   </div>

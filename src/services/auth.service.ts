@@ -3,10 +3,11 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../environments/environment';
 
 // Interfaz para los datos enviados al endpoint de login
 export interface LoginCredentials {
-  email: string; // O username, dependiendo de tu backend
+  identifier: string; // Puede ser email o username
   password: string;
 }
 
@@ -21,7 +22,8 @@ export interface AuthResponse {
 // Interfaz para el usuario almacenado localmente
 export interface StoredUser {
   id: number;
-  email: string;
+  email?: string;
+  username?: string;
   role?: string;
   token: string;
 }
@@ -31,7 +33,7 @@ export interface StoredUser {
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8080/api/auth'; // URL base para autenticación
+  private apiUrl = `${environment.apiUrl}/api/auth`; // URL base para autenticación
   private tokenKey = 'authToken'; // Clave para guardar el token en localStorage
   private isBrowser: boolean;
   private userKey = 'user'; // Clave para almacenar datos del usuario
@@ -77,7 +79,12 @@ export class AuthService {
           // Almacenar la información del usuario incluyendo el rol
           const userData: StoredUser = {
             id: Number(response.userId) || 0,
-            email: credentials.email,
+            username: typeof credentials.identifier === 'string' && !credentials.identifier.includes('@') 
+              ? credentials.identifier 
+              : undefined,
+            email: typeof credentials.identifier === 'string' && credentials.identifier.includes('@') 
+              ? credentials.identifier 
+              : undefined,
             role: role,
             token: response.token
           };
@@ -196,6 +203,12 @@ export class AuthService {
    * Obtiene los datos del usuario actual desde localStorage.
    */
   getCurrentUser(): StoredUser | null {
+    // Primero verificar si estamos en un entorno de navegador
+    if (!this.isBrowser) {
+      console.log('No estamos en un navegador, retornando null');
+      return null;
+    }
+    
     try {
       const userData = localStorage.getItem(this.userKey);
       if (!userData) return null;

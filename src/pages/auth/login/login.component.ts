@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
     private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+      identifier: ['', [Validators.required]],
       password: ['', [Validators.required]],
       rememberMe: [false]
     });
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Prellenar los campos con un usuario administrador por defecto (para pruebas)
     this.loginForm.patchValue({
-      email: 'admin@example.com',
+      identifier: 'admin',
       password: 'admin123'
     });
   }
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
     this.isLoading = true;
 
     const credentials = {
-      email: this.loginForm.value.email,
+      identifier: this.loginForm.value.identifier,
       password: this.loginForm.value.password
     };
     console.log('Credenciales:', credentials);

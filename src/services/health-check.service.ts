@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
+import { environment } from '../environments/environment';
 
 interface DbStatusResponse {
   status: 'UP' | 'DOWN' | string; // Puede haber otros estados
@@ -13,8 +14,8 @@ export type DbConnectionStatus = 'UP' | 'DOWN' | 'ERROR' | 'CHECKING';
 })
 export class HealthCheckService {
 
-  // Asume que este endpoint existe en el backend
-  private healthCheckUrl = 'http://localhost:8080/api/health/db'; 
+  // Usar la URL base desde environment
+  private healthCheckUrl = `${environment.apiUrl}/api/health/db`; 
 
   constructor(private http: HttpClient) { }
 

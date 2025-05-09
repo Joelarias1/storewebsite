@@ -29,6 +29,17 @@
         </svg>
         Nuevo tema
       </a>
+
+      <!-- Botón de recarga -->
+      <button 
+        (click)="refreshCategories()" 
+        class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded-lg flex items-center transition"
+        [disabled]="loading"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" [class.animate-spin]="loading" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </button>
       
       <!-- Selector de vista -->
       <div class="bg-gray-700 rounded-lg flex">
@@ -67,15 +78,32 @@
     </div>
   </div>
   
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="bg-red-900/50 border border-red-700 text-white p-4 rounded-lg mb-6 flex items-start">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <div>
+      <p class="font-medium">{{ error }}</p>
+      <p class="text-red-300 mt-1">Se están mostrando datos de ejemplo.</p>
+    </div>
+  </div>
+  
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="bg-gray-800 rounded-lg p-8 text-center mb-6">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+    <p class="text-gray-300">Cargando categorías del foro...</p>
+  </div>
+  
   <!-- Vista de categorías en Grid -->
-  <div *ngIf="forumView === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 category-grid">
+  <div *ngIf="!loading && forumView === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 category-grid">
     <div 
       *ngFor="let category of categories" 
       class="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 hover:bg-gray-750 hover:translate-y-[-4px] category-card"
     >
       <div class="p-6">
         <div class="flex items-start mb-4">
-          <div [ngClass]="'w-12 h-12 rounded-lg flex items-center justify-center mr-4 category-icon ' + getColorClass(category.color)">
+          <div [ngClass]="'w-12 h-12 rounded-lg flex items-center justify-center mr-4 category-icon ' + getColorClass(category.color || 'blue')">
             <svg *ngIf="category.icon === 'code'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
@@ -104,10 +132,10 @@
         <div class="flex justify-between items-center text-sm">
           <div class="flex space-x-4">
             <div class="text-gray-400">
-              <span class="font-semibold text-blue-400">{{ category.topics }}</span> temas
+              <span class="font-semibold text-blue-400">{{ category.threadCount || 0 }}</span> temas
             </div>
             <div class="text-gray-400">
-              <span class="font-semibold text-blue-400">{{ category.posts }}</span> posts
+              <span class="font-semibold text-blue-400">{{ category.posts || 0 }}</span> posts
             </div>
           </div>
           
@@ -132,13 +160,13 @@
   </div>
   
   <!-- Vista de categorías en lista -->
-  <div *ngIf="forumView === 'list'" class="space-y-4">
+  <div *ngIf="!loading && forumView === 'list'" class="space-y-4">
     <div 
       *ngFor="let category of categories" 
       class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-750 transition"
     >
       <div class="p-4 flex flex-col md:flex-row items-start md:items-center">
-        <div [ngClass]="'w-12 h-12 rounded-lg flex items-center justify-center mr-4 category-icon ' + getColorClass(category.color)">
+        <div [ngClass]="'w-12 h-12 rounded-lg flex items-center justify-center mr-4 category-icon ' + getColorClass(category.color || 'blue')">
           <svg *ngIf="category.icon === 'code'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
@@ -165,11 +193,11 @@
         
         <div class="flex space-x-4 text-sm mt-3 md:mt-0">
           <div class="text-center">
-            <div class="font-semibold text-blue-400">{{ category.topics }}</div>
+            <div class="font-semibold text-blue-400">{{ category.threadCount || 0 }}</div>
             <div class="text-gray-400 text-xs">Temas</div>
           </div>
           <div class="text-center">
-            <div class="font-semibold text-blue-400">{{ category.posts }}</div>
+            <div class="font-semibold text-blue-400">{{ category.posts || 0 }}</div>
             <div class="text-gray-400 text-xs">Posts</div>
           </div>
         </div>
@@ -186,6 +214,24 @@
         </div>
       </div>
     </div>
+  </div>
+  
+  <!-- Mensaje cuando no hay categorías -->
+  <div *ngIf="!loading && categories.length === 0" class="bg-gray-800 rounded-lg p-8 text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h3 class="text-xl font-medium text-gray-300 mb-2">No hay categorías disponibles</h3>
+    <p class="text-gray-400">No se encontraron categorías para mostrar.</p>
+    <button 
+      (click)="refreshCategories()" 
+      class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-flex items-center transition"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Intentar nuevamente
+    </button>
   </div>
   
   <!-- Ayuda y reglas -->

@@ -27,6 +27,7 @@ export class ThreadViewComponent implements OnInit {
   currentUserId: number = 0;
   isLoggedIn: boolean = false;
   isSendingComment: boolean = false;
+  isOfflineMode: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -161,6 +162,7 @@ export class ThreadViewComponent implements OnInit {
     this.isReplying = false; 
     this.isSendingComment = true; 
     this.errorMessage = ''; 
+    this.isOfflineMode = false; // Reset offline mode flag
     
     console.log('Enviando comentario al servidor:', commentData);
     
@@ -173,23 +175,46 @@ export class ThreadViewComponent implements OnInit {
           this.isSendingComment = false; 
           this.errorMessage = ''; 
           
-    
-          this.loadComments();
+          // Simular adición del comentario sin necesidad de recargar todos los comentarios
+          if (!this.comments) {
+            this.comments = [];
+          }
+          
+          // Añadir el comentario a la lista local
+          const newCommentWithUser = {
+            ...comment,
+            user: {
+              id: this.currentUserId,
+              username: 'Usuario Actual'
+            }
+          };
+          
+          this.comments.push(newCommentWithUser);
+          
+          // Si estamos en modo offline o simulado, no recargar los comentarios
+          if (comment && comment.id && comment.id > 1000) { // ID simulado
+            console.log('Usando comentario simulado, no recargamos del servidor');
+            this.isOfflineMode = true; // Mostrar mensaje de modo offline
+          } else {
+            // Si tenemos conexión con el backend, recargar para obtener datos actualizados
+            this.loadComments();
+          }
         },
         error: (error) => {
           console.error('Error al crear comentario:', error);
           
-          if (error.status === 500) {
+          // En caso de error de conexión, mostrar mensaje de modo offline
+          if (error.status === 0) {
+            this.isOfflineMode = true;
+            this.errorMessage = 'No se pudo conectar con el servidor. Tu comentario se ha guardado localmente.';
+          } else if (error.status === 500) {
             this.errorMessage = 'Error en el servidor. El equipo técnico ha sido notificado.';
           } else if (error.status === 400) {
             this.errorMessage = 'Datos inválidos. Por favor revisa la información ingresada.';
           } else if (error.status === 401 || error.status === 403) {
             this.errorMessage = 'No tienes permiso para realizar esta acción. Por favor inicia sesión nuevamente.';
-
           } else if (error.status === 404) {
             this.errorMessage = 'No se encontró el recurso solicitado. El post puede haber sido eliminado.';
-          } else if (error.status === 0) {
-            this.errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
           } else {
             this.errorMessage = 'Error al publicar comentario. Por favor, intenta más tarde.';
           }

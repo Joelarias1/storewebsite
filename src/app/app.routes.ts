@@ -61,7 +61,6 @@ export const routes: Routes = [
       { path: 'categorias/:id', loadComponent: () => import('../pages/dashboard/category-view/category-view.component').then(c => c.CategoryViewComponent) },
       // Rutas de perfil
       { path: 'profile', component: ProfileComponent },
-      { path: 'profile/edit', loadComponent: () => import('../pages/dashboard/profile-edit/profile-edit.component').then(c => c.ProfileEditComponent) },
       
       // Gestión de usuarios (admin)
       { path: 'user-management', component: UserListComponent, canActivate: [adminGuard] },
