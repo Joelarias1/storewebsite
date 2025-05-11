@@ -19,8 +19,8 @@
       <div class="flex space-x-4">
         <a routerLink="/new-thread" class="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors">
           <i class="fa fa-plus mr-2"></i>
-          Crear tema
-        </a>
+              Crear tema
+            </a>
         
         <div class="inline-flex rounded-md shadow-sm">
           <button 
@@ -90,7 +90,7 @@
             <button class="text-gray-400 hover:text-red-400 transition-colors">
               <i class="fa fa-arrow-down"></i>
             </button>
-          </div>
+            </div>
           
           <!-- Contenido principal del post -->
           <div class="flex-1 p-4">
@@ -134,11 +134,11 @@
                 <i class="fa fa-eye mr-1"></i>
                 Ver completo
               </a>
-            </div>
           </div>
         </div>
       </div>
-      
+    </div>
+    
       <!-- Cargando más posts -->
       <div *ngIf="loading && posts.length > 0" class="flex justify-center p-4">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -163,20 +163,20 @@
       <div class="divide-y divide-gray-700">
         <div *ngIf="categories.length === 0 && !error" class="p-4 text-center text-gray-400">
           <p>Cargando categorías...</p>
-        </div>
+            </div>
         
         <a *ngFor="let category of categories" 
            [routerLink]="['/category', category.id]" 
            class="flex items-center p-4 hover:bg-gray-700/50 transition-colors">
           <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center mr-3 text-white">
             <i class="fa fa-folder"></i>
-          </div>
+              </div>
           <div>
             <h3 class="font-medium text-white">{{ category.name }}</h3>
             <p class="text-xs text-gray-400">{{ category.description }}</p>
-          </div>
+                </div>
         </a>
-      </div>
+            </div>
       
       <div class="p-4 bg-gray-800 border-t border-gray-700">
         <a routerLink="/forums" class="text-blue-400 hover:underline text-sm">

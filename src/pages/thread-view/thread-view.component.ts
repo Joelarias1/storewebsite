@@ -197,7 +197,7 @@ export class ThreadViewComponent implements OnInit {
             this.isOfflineMode = true; // Mostrar mensaje de modo offline
           } else {
             // Si tenemos conexión con el backend, recargar para obtener datos actualizados
-            this.loadComments();
+          this.loadComments();
           }
         },
         error: (error) => {

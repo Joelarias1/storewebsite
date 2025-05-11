@@ -139,8 +139,8 @@ export class HomeComponent implements OnInit {
   // Métodos para crear datos de prueba
   createTestPosts(): void {
     this.posts = [
-      {
-        id: 1,
+    {
+      id: 1,
         title: 'Guía definitiva para aprender Angular 18 en 2024',
         content: 'Angular 18 trae grandes mejoras en rendimiento y nuevas características que facilitan el desarrollo de aplicaciones modernas. En esta guía exploraremos los conceptos fundamentales, desde la configuración del entorno hasta técnicas avanzadas para optimizar tus aplicaciones. También veremos las mejores prácticas para trabajar con el nuevo sistema de señales y cómo aprovechar al máximo las funcionalidades standalone.',
         userId: 1,
@@ -151,9 +151,9 @@ export class HomeComponent implements OnInit {
         createdAt: this.randomDate(7).toISOString(),
         status: 'ACTIVE',
         category: { id: 1, name: 'Desarrollo Frontend' }
-      },
-      {
-        id: 2,
+    },
+    {
+      id: 2,
         title: 'Comparativa: React vs Angular vs Vue en 2024',
         content: '¿Cuál es el mejor framework frontend en 2024? Analizamos en profundidad las ventajas y desventajas de cada uno, considerando factores como rendimiento, curva de aprendizaje, soporte de la comunidad, y escalabilidad para proyectos de diferentes tamaños. También incluimos ejemplos de código y casos de uso donde cada framework brilla especialmente.',
         userId: 2,
@@ -164,9 +164,9 @@ export class HomeComponent implements OnInit {
         createdAt: this.randomDate(14).toISOString(),
         status: 'ACTIVE',
         category: { id: 1, name: 'Desarrollo Frontend' }
-      },
-      {
-        id: 3,
+    },
+    {
+      id: 3,
         title: 'Implementando microservicios con Spring Boot y Docker',
         content: 'En este tutorial, mostramos paso a paso cómo diseñar e implementar una arquitectura de microservicios utilizando Spring Boot, Docker y Kubernetes. Aprenderás patrones de diseño comunes, estrategias de comunicación entre servicios, y técnicas para garantizar la resiliencia y escalabilidad de tu aplicación.',
         userId: 3,
@@ -177,9 +177,9 @@ export class HomeComponent implements OnInit {
         createdAt: this.randomDate(3).toISOString(),
         status: 'ACTIVE',
         category: { id: 2, name: 'Desarrollo Backend' }
-      },
-      {
-        id: 4,
+    },
+    {
+      id: 4,
         title: 'Mejores prácticas para CI/CD con GitHub Actions',
         content: 'GitHub Actions se ha convertido en una herramienta fundamental para la integración y despliegue continuo. En este post, compartimos estrategias avanzadas para configurar flujos de trabajo eficientes, automatizar pruebas, y optimizar el proceso de entrega de software. Incluye ejemplos reales y configuraciones que puedes adaptar a tus proyectos.',
         userId: 4,
@@ -190,9 +190,9 @@ export class HomeComponent implements OnInit {
         createdAt: this.randomDate(5).toISOString(),
         status: 'ACTIVE',
         category: { id: 3, name: 'DevOps y Cloud' }
-      },
-      {
-        id: 5,
+    },
+    {
+      id: 5,
         title: 'Introducción a LangChain: Construyendo aplicaciones con LLMs',
         content: 'LangChain es un framework que simplifica la creación de aplicaciones avanzadas con Modelos de Lenguaje de Gran Escala (LLMs). Este tutorial te guía a través de la configuración inicial, integración con diferentes modelos como GPT-4, y creación de cadenas complejas para aplicaciones de IA generativa con memoria y razonamiento.',
         userId: 5,

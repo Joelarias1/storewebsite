@@ -286,21 +286,21 @@ export class ForumService {
           
           // Implementación alternativa mientras se soluciona el backend
           console.warn('API para comentarios no disponible, usando alternativa local');
-          
-          // Crear un comentario simulado con los datos proporcionados
-          const mockComment: Comment = {
-            id: Math.floor(Math.random() * 10000), // ID aleatorio
-            content: commentData.content,
-            postId: commentData.postId,
-            userId: commentData.userId,
+            
+            // Crear un comentario simulado con los datos proporcionados
+            const mockComment: Comment = {
+              id: Math.floor(Math.random() * 10000), // ID aleatorio
+              content: commentData.content,
+              postId: commentData.postId,
+              userId: commentData.userId,
             userName: 'Usuario Actual', // Nombre genérico
-            createdAt: new Date().toISOString(),
-            status: 'ACTIVE'
-          };
-          
-          // Devolver el comentario simulado
-          console.log('Comentario simulado creado:', mockComment);
-          return of(mockComment);
+              createdAt: new Date().toISOString(),
+              status: 'ACTIVE'
+            };
+            
+            // Devolver el comentario simulado
+            console.log('Comentario simulado creado:', mockComment);
+            return of(mockComment);
         })
       );
   }

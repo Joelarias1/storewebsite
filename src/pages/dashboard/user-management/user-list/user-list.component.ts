@@ -88,12 +88,12 @@ export class UserListComponent implements OnInit {
     
     console.log(`Iniciando proceso de eliminación para usuario ID ${id} (${userName})`);
     
-    this.userService.deleteUser(id).subscribe({
+      this.userService.deleteUser(id).subscribe({
       next: (response) => {
         console.log('Respuesta recibida:', response);
         
         // Actualizar la UI quitando el usuario de la lista
-        this.users = this.users.filter(user => user.id !== id);
+          this.users = this.users.filter(user => user.id !== id);
         this.applyFilters();
         
         this.successMessage = `El usuario ${userName} ha sido eliminado correctamente.`;
@@ -103,9 +103,9 @@ export class UserListComponent implements OnInit {
         setTimeout(() => {
           this.successMessage = null;
         }, 3000);
-      },
-      error: (err) => {
-        console.error('Error al eliminar usuario:', err);
+        },
+        error: (err) => {
+          console.error('Error al eliminar usuario:', err);
         this.error = err.message || 'Ocurrió un error al eliminar el usuario. Por favor, intenta nuevamente.';
         this.processingUserId = null;
         
@@ -255,8 +255,8 @@ export class UserListComponent implements OnInit {
         setTimeout(() => {
           this.error = null;
         }, 5000);
-      }
-    });
+        }
+      });
   }
 
   // Desactivar un usuario
